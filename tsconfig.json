@@ -19,5 +19,5 @@
     "noImplicitAny": true,
     "allowUnreachableCode": false,
   },
-  "include": ["src", "tsconfig.paths.json"]
+  "include": ["src", "tsconfig.paths.json"],
 }
