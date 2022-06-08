@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -18,5 +19,5 @@
     "noImplicitAny": true,
     "allowUnreachableCode": false,
   },
-  "include": ["src"]
+  "include": ["src", "tsconfig.paths.json"]
 }
