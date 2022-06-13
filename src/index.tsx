@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import reportWebVitals from './reportWebVitals'
 
+import '@fontsource/roboto'
+import '@fontsource/noto-sans'
 import '@/index.css'
 import App from '@/App'
 
