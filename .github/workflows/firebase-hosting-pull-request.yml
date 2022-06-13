@@ -16,3 +16,4 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FREBERN_YELLOW_ROOM }}'
           projectId: frebern-yellow-room
+          channelId:
