@@ -1,4 +1,6 @@
-import { BrowserRouter, Route, Routes, Navigate, Outlet } from 'react-router-dom'
+import {
+  Routes, Route, Navigate, Outlet, BrowserRouter,
+} from 'react-router-dom'
 import { Box } from '@mui/material'
 
 import Lobby from '@page/Lobby'
@@ -16,8 +18,8 @@ function Router () {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Page />}>
-          <Route path="/" element={<Lobby />} />
+        <Route path="/" element={<Page />}>
+          <Route index element={<Lobby />} />
           <Route path="/room/:id" element={<Room />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Route>

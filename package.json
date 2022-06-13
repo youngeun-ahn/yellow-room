@@ -1,7 +1,6 @@
 {
-  "homepage": "https://frebern.github.io/yellow-room",
   "name": "yellow-room",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.3",
@@ -33,7 +32,6 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
     "firebase": "^9.8.3",
-    "gh-pages": "^4.0.0",
     "lodash": "^4.17.21",
     "material-ui-popup-state": "^3.1.1",
     "nanoid": "^4.0.0",
@@ -55,9 +53,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

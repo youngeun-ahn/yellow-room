@@ -1,0 +1,23 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "Song",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "media",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "rating",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
