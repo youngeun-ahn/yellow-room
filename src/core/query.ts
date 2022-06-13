@@ -1,4 +1,4 @@
-import { collection, query, doc, where } from 'firebase/firestore'
+import { collection, query, doc, where, orderBy } from 'firebase/firestore'
 import {
   useFirestoreQueryData,
   useFirestoreDocumentMutation,
@@ -7,20 +7,37 @@ import {
 import { nanoid } from 'nanoid'
 import { useMemo } from 'react'
 import sha1 from 'sha1'
+import { useDeepCompareCallback } from 'use-deep-compare'
+import { groupBy } from 'lodash'
 import firestore, { getDefaultConverter } from './firestore'
 import { isKeywordIncludes } from './util'
 
-declare interface Song {
-  name: string
+export type KeyGender = 'MALE' | 'FEMALE' | 'NONE'
+export type Rating = 0 | 1 | 2 | 3 | 4 | 5
+export interface Song {
+  id: string
+  num: string
+  keyOffset: number
+  keyGender: KeyGender
+  title: string
+  media: string
+  singer: string
+  tagList: string[]
+  isBlacklist: boolean
+  rating: Rating
+  memo: string
+  lyric: string
+  embedLink: string
 }
 
-declare interface Room {
+export interface Room {
   id: string
   name: string
   pwd: string
 }
 
 const ROOT = 'Room'
+const SONG_LIST = 'Song'
 const roomConverter = getDefaultConverter<Room>()
 
 const hash = (str: string) => {
@@ -43,11 +60,15 @@ export const useRoomList = (roomName = '') => {
 export const useNewRoom = () => {
   const roomId = useMemo(() => nanoid(5), [])
   const docRef = doc(firestore, ROOT, roomId)
-  const { mutate, ...mutation } = useFirestoreDocumentMutation(docRef)
+  const {
+    mutate,
+    ...result
+  } = useFirestoreDocumentMutation(docRef)
+
   return {
-    ...mutation,
+    ...result,
     roomId,
-    create: (roomName: string, roomPwd: string) => mutate({
+    createNewRoom: (roomName: string, roomPwd: string) => mutate({
       id: roomId,
       name: roomName,
       pwd: hash(roomPwd),
@@ -80,6 +101,46 @@ export const useRoom = (roomId: string) => {
   const {
     data: room,
     ...result
-  } = useFirestoreDocumentData([ROOT, roomId], docRef)
+  } = useFirestoreDocumentData([ROOT, roomId], docRef, {
+
+  })
   return { room, ...result }
+}
+
+export const useSongList = (roomId: string) => {
+  const songListRef = collection(firestore, ROOT, roomId, SONG_LIST)
+    .withConverter(getDefaultConverter<Song>())
+  const ref = query(songListRef, orderBy('media'), orderBy('title'), orderBy('rating'))
+
+  const {
+    data: songList = [],
+    ...result
+  } = useFirestoreQueryData(
+    [ROOT, roomId, SONG_LIST],
+    ref,
+    { subscribe: true },
+    { enabled: Boolean(roomId) },
+  )
+
+  const filter = useDeepCompareCallback((keyword = '') => {
+    if (!keyword) return songList
+    return songList.filter(song => {
+      const isTitleMatched = isKeywordIncludes(song.title, keyword)
+      const isSingerMatched = isKeywordIncludes(song.singer, keyword)
+      const isMediaMatched = isKeywordIncludes(song.media, keyword)
+      const isTagMatched = song.tagList.some(tag => isKeywordIncludes(tag, keyword))
+      return isTitleMatched || isSingerMatched || isMediaMatched || isTagMatched
+    })
+  }, [songList])
+
+  const groupByMedia = useDeepCompareCallback((keyword?: string) => (
+    groupBy(filter(keyword), 'media')
+  ), [songList])
+
+  return {
+    filter,
+    groupBy: groupByMedia,
+    songList,
+    ...result,
+  }
 }

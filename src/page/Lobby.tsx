@@ -41,7 +41,7 @@ function Login () {
   const navigate = useNavigate()
   const { room } = useFindRoom(roomName.trim(), roomPwd.trim())
   const {
-    create: createNewRoom,
+    createNewRoom,
     roomId: newRoomId,
     isLoading: isLoadingNewRoom,
   } = useNewRoom()
@@ -57,7 +57,7 @@ function Login () {
   })
 
   return (
-    <Box className="f-center h-full p-24 bg-yellow-300">
+    <>
       <Box className="f-col-12 w-full max-w-md px-16 py-24">
         <Box>
           <Typography fontFamily="Roboto" fontSize="2.8rem" lineHeight={1.5}>
@@ -186,7 +186,7 @@ function Login () {
           Enter My Yellow Room!
         </LoadingButton>
       </Box>
-    </Box>
+    </>
   )
 }
 
