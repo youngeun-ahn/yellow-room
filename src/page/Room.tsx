@@ -1,27 +1,18 @@
-import { useLocation, useParams } from 'react-router-dom'
+import { useRoom } from '@core/query'
+import { Box } from '@mui/material'
+import { Navigate, useParams } from 'react-router-dom'
 
-interface RoomLocationState {
-  roomName?: string
-  roomPwd?: string
-}
-
-interface Props {
-  newRoom?: boolean
-}
-function Room ({ newRoom }: Props) {
-  const { state } = useLocation()
+function Room () {
   const { id = '' } = useParams()
+  const { room, isLoading } = useRoom(id)
 
-  const {
-    roomName, roomPwd,
-  } = (state ?? {}) as RoomLocationState
-
-  console.log(newRoom, state, id)
-
+  if (!id) {
+    return <Navigate to="/" />
+  }
   return (
-    <>
-      asdfasdf
-    </>
+    <Box className="f-center h-full p-24 bg-yellow-100">
+      {JSON.stringify(room)}
+    </Box>
   )
 }
 

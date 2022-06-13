@@ -1,11 +1,12 @@
 import { ChangeEvent } from 'react'
 import {
-  Autocomplete, Box, Button, TextField, Typography,
+  Autocomplete, Box, TextField, Typography,
 } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 import { Info, InfoOutlined } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { useRoomList } from '@/core/query'
+import { Controller, useForm } from 'react-hook-form'
+import { useNewRoom, useFindRoom, useRoomList } from '@core/query'
 
 interface RoomForm {
   roomName: string
@@ -13,7 +14,14 @@ interface RoomForm {
 }
 
 function Login () {
-  const roomForm = useForm<RoomForm>({ mode: 'all' })
+  /* Forms */
+  const roomForm = useForm<RoomForm>({
+    mode: 'all',
+    defaultValues: {
+      roomName: '',
+      roomPwd: '',
+    },
+  })
   const onChange = (field: keyof RoomForm) => (e: ChangeEvent<HTMLInputElement>) => {
     const trimmed = e.target.value.trimStart()
     roomForm.setValue(field, trimmed)
@@ -22,15 +30,30 @@ function Login () {
     const trimmed = roomForm.getValues()[field].trim()
     roomForm.setValue(field, trimmed)
   }
-
   const { roomName, roomPwd } = roomForm.getValues()
   const { errors, dirtyFields } = roomForm.formState
-  const { roomList, isLoading } = useRoomList(roomName)
+  const {
+    roomList,
+    isLoading: isLoadingRoomList,
+  } = useRoomList(roomName)
 
+  /* Login */
   const navigate = useNavigate()
+  const { room } = useFindRoom(roomName.trim(), roomPwd.trim())
+  const {
+    create: createNewRoom,
+    roomId: newRoomId,
+    isLoading: isLoadingNewRoom,
+  } = useNewRoom()
   const onClickEnter = roomForm.handleSubmit(() => {
-    console.log('Enter', roomName, roomPwd)
-    navigate('/list', { state: { roomName, roomPwd } })
+    // 없는 방이면 firebase 문서 생성하고 redirect
+    if (!room) {
+      createNewRoom(roomName.trim(), roomPwd.trim())
+      navigate(`/room/${newRoomId}`, { replace: true })
+      return
+    }
+    // 있는 방이면 바로 redirect
+    navigate(`/room/${room.id}`, { replace: true })
   })
 
   return (
@@ -45,49 +68,54 @@ function Login () {
           </Typography>
         </Box>
         <Box className="f-col-4">
-          <Autocomplete
-            className="w-full"
-            freeSolo
-            options={roomList.map(_ => _.name)}
-            loading={isLoading}
-            renderInput={params => (
-              <TextField
-                error={Boolean(errors.roomName)}
-                required
-                label="Room Name"
-                variant="standard"
-                {...params}
-                inputProps={{
-                  ...params.inputProps,
-                  maxLength: 24,
-                }}
-                {...roomForm.register('roomName', {
-                  required: {
-                    value: true,
-                    message: '방 이름은 2글자 이상이어야 합니다.',
-                  },
-                  minLength: {
-                    value: 2,
-                    message: '방 이름은 2글자 이상이어야 합니다.',
-                  },
-                  maxLength: {
-                    value: 24,
-                    message: '방 이름은 24글자 이하여야 합니다.',
-                  },
-                  onChange: onChange('roomName'),
-                  value: roomName,
-                  // onBlur: onBlur('roomName'), // FIXME: 의도대로 동작하지 않음.
-                })}
-                helperText={(
-                  <Box
-                    component="span"
-                    visibility={errors.roomName ? 'visible' : 'hidden'}
-                  >
-                    <InfoOutlined className="!text-xs" />
-                    <span className="!text-xs">
-                      {errors.roomName?.message}
-                    </span>
-                  </Box>
+          <Controller
+            name="roomName"
+            control={roomForm.control}
+            rules={{
+              required: {
+                value: true,
+                message: '방 이름은 2글자 이상이어야 합니다.',
+              },
+              minLength: {
+                value: 2,
+                message: '방 이름은 2글자 이상이어야 합니다.',
+              },
+              maxLength: {
+                value: 24,
+                message: '방 이름은 24글자 이하여야 합니다.',
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <Autocomplete
+                className="w-full"
+                loading={isLoadingRoomList}
+                freeSolo
+                autoSelect
+                options={Array.from(new Set(roomList.map(_ => _.name)))}
+                onChange={(_, v = '') => field.onChange(v ?? '')}
+                renderInput={params => (
+                  <TextField
+                    error={Boolean(fieldState.error)}
+                    required
+                    label="Room Name"
+                    variant="standard"
+                    {...params}
+                    inputProps={{
+                      ...params.inputProps,
+                      maxLength: 24,
+                    }}
+                    helperText={(
+                      <Box
+                        component="span"
+                        visibility={fieldState.error ? 'visible' : 'hidden'}
+                      >
+                        <InfoOutlined className="!text-xs" />
+                        <span className="!text-xs">
+                          {fieldState.error?.message}
+                        </span>
+                      </Box>
+                    )}
+                  />
                 )}
               />
             )}
@@ -147,7 +175,8 @@ function Login () {
             />
           </Box>
         </Box>
-        <Button
+        <LoadingButton
+          loading={isLoadingNewRoom}
           variant="contained"
           size="large"
           disableElevation
@@ -155,7 +184,7 @@ function Login () {
           onClick={onClickEnter}
         >
           Enter My Yellow Room!
-        </Button>
+        </LoadingButton>
       </Box>
     </Box>
   )

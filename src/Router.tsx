@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 
 import Login from '@page/Login'
 import Room from '@page/Room'
@@ -7,11 +7,9 @@ function Router () {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/">
-          <Route index element={<Login />} />
-          <Route path="/list" element={<Room newRoom />} />
-          <Route path="/list/:id" element={<Room />} />
-        </Route>
+        <Route path="/" element={<Login />} />
+        <Route path="/room/:id" element={<Room />} />
+        <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   )
