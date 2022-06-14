@@ -1,6 +1,7 @@
 import { Song } from '@core/query'
 import { EditOutlined } from '@mui/icons-material'
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material'
+import { useSongModalContext } from './SongModal/SongModalProvider'
 
 interface Props {
   song: Song
@@ -17,6 +18,8 @@ function SongCard ({ song }: Props) {
     ? `${song.title} (${song.singer})`
     : song.title
 
+  const { openModal } = useSongModalContext()
+
   return (
     <Card className="w-full sm:w-[24rem]">
       <CardContent className="relative !p-8 sm:!p-12">
@@ -25,6 +28,7 @@ function SongCard ({ song }: Props) {
           size="small"
           color="secondary"
           className="!absolute top-4 right-4 opacity-50 hover:opacity-100"
+          onClick={() => openModal(song)}
         >
           <EditOutlined fontSize="small" />
         </IconButton>

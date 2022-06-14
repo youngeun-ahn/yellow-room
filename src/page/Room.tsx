@@ -1,14 +1,19 @@
 import { useRoom, useSongList } from '@core/query'
-import { Box, TextField } from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { Box, Fab, TextField } from '@mui/material'
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
-import Header from './component/Header'
-import SongGroup from './component/SongGroup'
+import SongGroup from '@component/SongGroup'
+import Header from '@component/Header'
+import SongModalProvider, { useSongModalContext } from '@component/SongModal/SongModalProvider'
+import SongModal from '@component/SongModal/SongModal'
 
 function Room () {
   const { id = '' } = useParams()
   const { room } = useRoom(id)
   const [keyword, setKeyword] = useState('')
+
+  const { openModal } = useSongModalContext()
 
   const {
     filter,
@@ -25,6 +30,16 @@ function Room () {
   return (
     <>
       <Header title={room?.name} />
+      <Fab
+        color="primary"
+        className="!fixed right-16 bottom-16"
+        onClick={() => {
+          console.log('hhiih')
+          openModal()
+        }}
+      >
+        <Add fontSize="large" />
+      </Fab>
       <Box className="f-col-16 w-full h-full pt-[4.2rem] sm:pt-[5.4rem]">
         <TextField
           value={keyword}
@@ -57,4 +72,13 @@ function Room () {
   )
 }
 
-export default Room
+function RoomPage () {
+  return (
+    <SongModalProvider>
+      <Room />
+      <SongModal />
+    </SongModalProvider>
+  )
+}
+
+export default RoomPage

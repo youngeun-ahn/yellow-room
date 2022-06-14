@@ -1,16 +1,20 @@
 import { AppBar, Toolbar, Typography } from '@mui/material'
+import { useState } from 'react'
 import SettingDrawer from './SettingDrawer'
 
 interface Props {
   title?: string
 }
 function RoomHeader ({ title = '' }: Props) {
+  const [open, setOpen] = useState(false)
+  const toggle = (isOpen = !open) => setOpen(isOpen)
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" className="!z-[9999]">
       <Toolbar disableGutters className="f-row-start-4 px-8">
-        <SettingDrawer />
+        <SettingDrawer open={open} toggle={toggle} />
         <Typography variant="h6">
           {title}
+          {open && ' > Settings'}
         </Typography>
       </Toolbar>
     </AppBar>

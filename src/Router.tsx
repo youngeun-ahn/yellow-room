@@ -4,7 +4,7 @@ import {
 import { Box } from '@mui/material'
 
 import Lobby from '@page/Lobby'
-import Room from '@page/Room/Room'
+import Room from '@page/Room'
 
 function Page () {
   return (
