@@ -1,5 +1,5 @@
 import { useRoom, useSongList } from '@core/query'
-import { Add } from '@mui/icons-material'
+import { Add, Search } from '@mui/icons-material'
 import { Box, Fab, TextField } from '@mui/material'
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
@@ -33,10 +33,7 @@ function Room () {
       <Fab
         color="primary"
         className="!fixed right-16 bottom-16"
-        onClick={() => {
-          console.log('hhiih')
-          openModal()
-        }}
+        onClick={() => openModal()}
       >
         <Add fontSize="large" />
       </Fab>
@@ -48,6 +45,9 @@ function Room () {
           placeholder="제목, 가수, 원작명, 태그로 검색"
           fullWidth
           onChange={e => setKeyword(e.target.value)}
+          InputProps={{
+            endAdornment: <Search color="action" />,
+          }}
         />
         {isSuccess && (
           hasSong ? (

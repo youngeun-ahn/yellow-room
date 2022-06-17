@@ -42,6 +42,7 @@ module.exports = {
     'react/require-default-props': 0,
     'react/jsx-no-useless-fragment': 0,
     'react/jsx-props-no-spreading': 0,
+    'react/jsx-max-props-per-line': ['error', { maximum: { single: 3, multi: 3 } }],
     'react/jsx-filename-extension': ['error', { extensions: ['.jsx', '.tsx'] }],
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-non-null-assertion': 0,
