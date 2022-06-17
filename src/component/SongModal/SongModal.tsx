@@ -1,4 +1,4 @@
-import { Close, Man, Woman, Wc, YouTube as YouTubeIcon, Save } from '@mui/icons-material'
+import { Close, Man, /* Woman, Wc, */ YouTube as YouTubeIcon, Save } from '@mui/icons-material'
 import {
   AppBar, Drawer, Toolbar, Autocomplete, Button, Checkbox,
   Dialog, DialogContent, DialogTitle,
