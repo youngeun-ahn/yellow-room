@@ -1,6 +1,6 @@
 import { Close, LockOpenOutlined, LockOutlined, Save } from '@mui/icons-material'
 import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useSongModalContext } from './SongModalProvider'
 
 interface Props {
@@ -8,24 +8,29 @@ interface Props {
 }
 function Header ({ onSave }: Props) {
   const {
-    open, mode, closeModal,
+    open, mode,
+    isNew, isEditable, isReadonly,
+    closeModal, setMode,
   } = useSongModalContext()
-  const [editable, setEditable] = useState(mode === 'NEW')
-
-  useEffect(() => {
-    setEditable(open ? mode === 'NEW' : false)
-  }, [open])
 
   const title = useMemo(() => {
-    if (mode === 'NEW') {
+    if (isNew) {
       return '새 노래 등록'
     }
-    return editable
-      ? '노래 편집'
-      : '노래 상세 보기'
+    if (isEditable) {
+      return '노래 편집'
+    }
+    if (isReadonly) {
+      return '노래 상세 보기'
+    }
+    return ''
   }, [mode])
 
-  const onToggleEditable = (nextEditable = !editable) => setEditable(nextEditable)
+  const onToggleEditable = useCallback(() => {
+    if (isNew) return
+    setMode(isEditable ? 'READ' : 'EDIT')
+  }, [mode])
+
   const onClickSave = () => {
     onSave()
     closeModal()
@@ -46,19 +51,17 @@ function Header ({ onSave }: Props) {
         </Typography>
         <Box className="f-row">
           {/* 저장 */}
-          {editable && (
+          {isEditable && (
             <IconButton onClick={onClickSave}>
               <Save htmlColor="white" />
             </IconButton>
           )}
           {/* Editable 토글 */}
-          {mode === 'EDIT' && (
-            <IconButton
-              onClick={() => onToggleEditable()}
-            >
+          {!isNew && (
+            <IconButton onClick={onToggleEditable}>
               <SvgIcon
                 sx={{ color: 'white' }}
-                component={editable ? LockOpenOutlined : LockOutlined}
+                component={isEditable ? LockOpenOutlined : LockOutlined}
               />
             </IconButton>
           )}

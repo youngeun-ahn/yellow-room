@@ -1,4 +1,3 @@
-import { Song } from '@core/query'
 import {
   createContext, useContext, useReducer,
   Dispatch, Reducer, PropsWithChildren,
@@ -14,6 +13,7 @@ const defaultContext: Context = { open: false }
 type Action =
   | { type: 'OPEN', song?: Song }
   | { type: 'CLOSE' }
+  | { type: 'SET_MODE', mode: Mode }
 
 const reducer: Reducer<Context, Action> = (state, action) => {
   switch (action.type) {
@@ -21,11 +21,16 @@ const reducer: Reducer<Context, Action> = (state, action) => {
       return {
         open: true,
         song: action.song,
-        mode: action.song ? 'EDIT' : 'NEW',
+        mode: action.song ? 'READ' : 'NEW',
       }
     case 'CLOSE':
       return {
         open: false,
+      }
+    case 'SET_MODE':
+      return {
+        ...state,
+        mode: action.mode,
       }
     default:
   }
@@ -53,12 +58,18 @@ export const useSongModalContext = () => {
   return {
     /* States */
     ...state,
+    isNew: state.mode === 'NEW',
+    isEditable: state.mode === 'EDIT',
+    isReadonly: state.mode === 'READ',
     /* Dispatches */
     openModal (song?: Song) {
       dispatch({ type: 'OPEN', song })
     },
     closeModal () {
       dispatch({ type: 'CLOSE' })
+    },
+    setMode (mode: Mode) {
+      dispatch({ type: 'SET_MODE', mode })
     },
   }
 }

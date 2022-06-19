@@ -1,6 +1,7 @@
 declare type Gender = 'MAN' | 'WOMAN' | 'BOTH' | 'NONE'
 
-declare interface SongForm {
+declare interface Song {
+  id: number
   number: number
   key: number
   gender: Gender
@@ -16,4 +17,4 @@ declare interface SongForm {
   youtube: string
 }
 
-declare type Mode = 'NEW' | 'EDIT'
+declare type Mode = 'NEW' | 'EDIT' | 'READ'

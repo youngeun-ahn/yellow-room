@@ -12,11 +12,7 @@ import { useSongModalContext } from './SongModalProvider'
 
 /* Song Modal */
 function SongModal () {
-  const {
-    song, open,
-  } = useSongModalContext()
-
-  const isNew = !song
+  const { song, open } = useSongModalContext()
 
   const {
     register,
@@ -24,17 +20,8 @@ function SongModal () {
     getFieldState,
     setValue,
     handleSubmit,
-  } = useForm<SongForm>({
-    defaultValues: {
-      gender: 'NONE',
-      origin: '',
-      rating: 0,
-      isBlacklist: false,
-      tagList: [],
-      memo: '',
-      lyric: '',
-      youtube: 'https://www.youtube.com/watch?v=9hj_AAjwBWo',
-    },
+  } = useForm<Song>({
+    defaultValues: song,
   })
 
   return (
@@ -108,7 +95,7 @@ function SongModal () {
               renderInput={props => (
                 <TextField
                   {...props}
-                  label="영화, 애니, 게임 등"
+                  label="작품 (영화, 드라마, 게임 등)"
                   variant="standard"
                   inputProps={{ maxLength: 64 }}
                 />
@@ -117,7 +104,7 @@ function SongModal () {
             />
             <Box className="f-row-start-24 !items-end">
               {/* 선호도 */}
-              <FormControl className="f-col !mt-12">
+              <FormControl className="f-col">
                 <FormLabel className="mb-8">선호도</FormLabel>
                 <Rating
                   size="large"
@@ -162,16 +149,18 @@ function SongModal () {
             {/* 메모 */}
             <TextField
               label="메모"
-              variant="standard" fullWidth
-              multiline maxRows={8}
-              inputProps={{ maxLength: 1024 }}
+              variant="outlined" fullWidth
+              multiline rows={4}
+              InputProps={{
+                inputProps: { maxLength: 1024 },
+              }}
               {...register('memo')}
             />
             {/* 가사 */}
             <TextField
               label="가사"
-              variant="standard" fullWidth
-              multiline maxRows={8}
+              variant="outlined" fullWidth
+              multiline rows={4}
               inputProps={{ maxLength: 1024 }}
               {...register('lyric')}
             />
@@ -187,4 +176,12 @@ function SongModal () {
   )
 }
 
-export default SongModal
+function SongModalOpener () {
+  const { open } = useSongModalContext()
+  if (!open) {
+    return <></>
+  }
+  return <SongModal />
+}
+
+export default SongModalOpener

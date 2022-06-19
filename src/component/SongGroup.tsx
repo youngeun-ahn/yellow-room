@@ -1,4 +1,3 @@
-import { Song } from '@core/query'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { Box, Collapse, Typography } from '@mui/material'
 import classNames from 'classnames'
