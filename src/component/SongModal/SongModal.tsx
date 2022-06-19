@@ -1,35 +1,19 @@
-import { Close, Save } from '@mui/icons-material'
 import {
-  AppBar, Drawer, Toolbar, Autocomplete, Checkbox,
+  Drawer, Autocomplete, Checkbox,
   DialogContent,
   FormControl, FormControlLabel, FormLabel,
-  Box, IconButton, Rating, TextField, Typography,
+  Box, Rating, TextField,
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import EmbedYouTube from './EmbedYouTube'
-import GenderToggleButton, { Gender } from './GenderToggleButton'
+import GenderToggleButton from './GenderToggleButton'
+import Header from './Header'
 import { useSongModalContext } from './SongModalProvider'
-
-interface SongForm {
-  number: number
-  key: number
-  gender: Gender
-  tempo : number
-  title: string
-  singer: string
-  origin: string
-  rating: number
-  isBlacklist: boolean
-  tagList: string[]
-  memo: string
-  lyric: string
-  youtube: string
-}
 
 /* Song Modal */
 function SongModal () {
   const {
-    song, open, closeModal,
+    song, open,
   } = useSongModalContext()
 
   const isNew = !song
@@ -53,27 +37,9 @@ function SongModal () {
     },
   })
 
-  const onClose = () => {
-    closeModal()
-  }
-
   return (
     <>
-      {open && (
-        <AppBar position="fixed" className="!z-[9999]">
-          <Toolbar disableGutters className="f-row-4 px-8">
-            <IconButton onClick={onClose}>
-              <Close htmlColor="white" />
-            </IconButton>
-            <Typography variant="h6" className="flex-auto">
-              {isNew ? '노래 등록' : '노래 상세 보기(편집)'}
-            </Typography>
-            <IconButton onClick={onClose}>
-              <Save htmlColor="white" />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-      )}
+      <Header onSave={() => {}} />
       <Drawer open={open} closeAfterTransition anchor="bottom">
         <DialogContent className="h-screen !pt-[4.8rem] bg-yellow-50">
           <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap">

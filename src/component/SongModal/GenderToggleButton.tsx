@@ -2,7 +2,6 @@ import { Man, Woman, Wc } from '@mui/icons-material'
 import { IconButton, SvgIcon } from '@mui/material'
 import { useMemo } from 'react'
 
-export type Gender = 'MAN' | 'WOMAN' | 'BOTH' | 'NONE'
 const GENDER_MAP = {
   MAN: 'WOMAN',
   WOMAN: 'BOTH',

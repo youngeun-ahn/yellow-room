@@ -7,6 +7,7 @@ import {
 interface Context {
   song?: Song
   open: boolean
+  mode?: Mode
 }
 const defaultContext: Context = { open: false }
 
@@ -20,6 +21,7 @@ const reducer: Reducer<Context, Action> = (state, action) => {
       return {
         open: true,
         song: action.song,
+        mode: action.song ? 'EDIT' : 'NEW',
       }
     case 'CLOSE':
       return {

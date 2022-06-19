@@ -10,7 +10,7 @@ function RoomHeader ({ title = '' }: Props) {
   const toggle = (isOpen = !open) => setOpen(isOpen)
   return (
     <AppBar position="fixed" className="!z-[9999]">
-      <Toolbar disableGutters className="f-row-start-4 px-8">
+      <Toolbar className="f-row-start-4">
         <SettingDrawer open={open} toggle={toggle} />
         <Typography variant="h6">
           {title}
