@@ -1,13 +1,30 @@
-import { Close, Man, /* Woman, Wc, */ YouTube as YouTubeIcon, Save } from '@mui/icons-material'
+import { Close, Save } from '@mui/icons-material'
 import {
-  AppBar, Drawer, Toolbar, Autocomplete, Button, Checkbox,
-  Dialog, DialogContent, DialogTitle,
+  AppBar, Drawer, Toolbar, Autocomplete, Checkbox,
+  DialogContent,
   FormControl, FormControlLabel, FormLabel,
-  Box, IconButton, Rating, TextField, Typography, DialogActions,
+  Box, IconButton, Rating, TextField, Typography,
 } from '@mui/material'
-import PopupState from 'material-ui-popup-state'
-import YouTube from 'react-youtube'
+import { useForm } from 'react-hook-form'
+import EmbedYouTube from './EmbedYouTube'
+import GenderToggleButton, { Gender } from './GenderToggleButton'
 import { useSongModalContext } from './SongModalProvider'
+
+interface SongForm {
+  number: number
+  key: number
+  gender: Gender
+  tempo : number
+  title: string
+  singer: string
+  origin: string
+  rating: number
+  isBlacklist: boolean
+  tagList: string[]
+  memo: string
+  lyric: string
+  youtube: string
+}
 
 /* Song Modal */
 function SongModal () {
@@ -16,6 +33,25 @@ function SongModal () {
   } = useSongModalContext()
 
   const isNew = !song
+
+  const {
+    register,
+    watch,
+    getFieldState,
+    setValue,
+    handleSubmit,
+  } = useForm<SongForm>({
+    defaultValues: {
+      gender: 'NONE',
+      origin: '',
+      rating: 0,
+      isBlacklist: false,
+      tagList: [],
+      memo: '',
+      lyric: '',
+      youtube: 'https://www.youtube.com/watch?v=9hj_AAjwBWo',
+    },
+  })
 
   const onClose = () => {
     closeModal()
@@ -47,26 +83,31 @@ function SongModal () {
                 label="번호"
                 variant="standard" type="number" required
                 className="w-[6rem]"
+                {...register('number', {
+                  required: '번호는 반드시 입력해야 합니다.',
+                })}
+                error={Boolean(getFieldState('number').error)}
+                helperText={getFieldState('number').error?.message}
               />
               <TextField
                 label="키"
                 variant="standard" type="number"
                 className="w-[6rem]"
+                {...register('key')}
                 InputProps={{
                   endAdornment: (
-                    <IconButton disableRipple size="small">
-                      <Man htmlColor="blue" fontSize="small" />
-                    </IconButton>
+                    <GenderToggleButton
+                      gender={watch('gender')}
+                      onChange={gender => setValue('gender', gender)}
+                    />
                   ),
                 }}
               />
-              <div className="flex-auto">{/* Gutter */}</div>
-              <FormControlLabel
-                label="블랙리스트"
-                className="!justify-self-end"
-                control={(
-                  <Checkbox disableRipple className="!p-2 !mr-2" />
-                )}
+              <TextField
+                label="템포"
+                variant="standard" type="number"
+                className="w-[6rem]"
+                {...register('tempo')}
               />
             </Box>
             {/* 노래 제목 */}
@@ -74,6 +115,11 @@ function SongModal () {
               label="노래 제목"
               variant="standard" fullWidth required
               inputProps={{ maxLength: 64 }}
+              {...register('title', {
+                required: '노래 제목은 반드시 입력해야 합니다.',
+              })}
+              error={Boolean(getFieldState('title').error)}
+              helperText={getFieldState('title').error?.message}
             />
             {/* 가수 */}
             <Autocomplete
@@ -85,6 +131,7 @@ function SongModal () {
                   label="가수"
                   variant="standard"
                   inputProps={{ maxLength: 64 }}
+                  {...register('singer')}
                 />
               )}
             />
@@ -95,26 +142,35 @@ function SongModal () {
               renderInput={props => (
                 <TextField
                   {...props}
-                  label="원작"
+                  label="영화, 애니, 게임 등"
                   variant="standard"
                   inputProps={{ maxLength: 64 }}
                 />
               )}
+              {...register('origin')}
             />
-            {/* 선호도, 숙련도 */}
-            <Box className="f-row-start-24 mt-8">
-              <FormControl>
+            <Box className="f-row-start-24 !items-end">
+              {/* 선호도 */}
+              <FormControl className="f-col !mt-12">
                 <FormLabel className="mb-8">선호도</FormLabel>
                 <Rating
                   size="large"
+                  value={watch('rating')}
+                  onChange={(_, rating) => setValue('rating', rating ?? 0)}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel className="mb-8">숙련도</FormLabel>
-                <Rating
-                  size="large"
-                />
-              </FormControl>
+              {/* 블랙리스트 여부 */}
+              <FormControlLabel
+                label="블랙리스트?"
+                control={(
+                  <Checkbox
+                    disableRipple
+                    className="!p-2 !mr-2"
+                    value={watch('isBlacklist')}
+                    onChange={(_, checked) => setValue('isBlacklist', checked)}
+                  />
+                )}
+              />
             </Box>
             {/* 태그 */}
             <Autocomplete
@@ -126,63 +182,38 @@ function SongModal () {
                   {...props}
                   label="#태그_목록"
                   variant="standard"
+                  error={Boolean(getFieldState('tagList').error)}
+                  helperText={getFieldState('tagList').error?.message}
                 />
               )}
+              {...register('tagList', {
+                maxLength: {
+                  value: 10,
+                  message: '최대 10개까지 태그를 지정할 수 있습니다.',
+                },
+              })}
             />
             {/* 메모 */}
             <TextField
               label="메모"
-              fullWidth
-              variant="standard" multiline maxRows={8}
+              variant="standard" fullWidth
+              multiline maxRows={8}
+              inputProps={{ maxLength: 1024 }}
+              {...register('memo')}
             />
             {/* 가사 */}
             <TextField
               label="가사"
-              fullWidth
-              variant="standard" multiline maxRows={8}
+              variant="standard" fullWidth
+              multiline maxRows={8}
+              inputProps={{ maxLength: 1024 }}
+              {...register('lyric')}
             />
             {/* 동영상 */}
-            <FormControl>
-              <YouTube
-                videoId="ROSM7WNWEWM"
-                className="mb-8"
-                opts={{
-                  width: '100%',
-                  height: 'auto',
-                }}
-                title="유튜브"
-              />
-              <PopupState variant="popper">
-                {popupState => (
-                  <>
-                    <Button
-                      variant="contained"
-                      onClick={popupState.open}
-                      className="!bg-red-600"
-                    >
-                      <YouTubeIcon fontSize="large" />
-                    </Button>
-                    <Dialog className="z-[9999]" open={popupState.isOpen}>
-                      <DialogTitle fontWeight="bold">
-                        YouTube 링크
-                      </DialogTitle>
-                      <DialogContent>
-                        <TextField
-                          placeholder="e.g) https://www.youtube.com/watch?v=..."
-                          variant="standard" fullWidth
-                          className="!min-w-[18rem]"
-                        />
-                      </DialogContent>
-                      <DialogActions className="!px-12 !pb-12">
-                        <Button variant="contained">
-                          확인
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  </>
-                )}
-              </PopupState>
-            </FormControl>
+            <EmbedYouTube
+              youtube={watch('youtube')}
+              onChange={youtube => setValue('youtube', youtube)}
+            />
           </Box>
         </DialogContent>
       </Drawer>
