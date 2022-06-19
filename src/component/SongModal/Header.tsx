@@ -1,6 +1,6 @@
 import { Close, LockOpenOutlined, LockOutlined, Save } from '@mui/icons-material'
 import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSongModalContext } from './SongModalProvider'
 
 interface Props {
@@ -11,6 +11,10 @@ function Header ({ onSave }: Props) {
     open, mode, closeModal,
   } = useSongModalContext()
   const [editable, setEditable] = useState(mode === 'NEW')
+
+  useEffect(() => {
+    setEditable(open ? mode === 'NEW' : false)
+  }, [open])
 
   const title = useMemo(() => {
     if (mode === 'NEW') {
@@ -48,12 +52,16 @@ function Header ({ onSave }: Props) {
             </IconButton>
           )}
           {/* Editable 토글 */}
-          <IconButton onClick={() => onToggleEditable()}>
-            <SvgIcon
-              sx={{ color: 'white' }}
-              component={editable ? LockOpenOutlined : LockOutlined}
-            />
-          </IconButton>
+          {mode === 'EDIT' && (
+            <IconButton
+              onClick={() => onToggleEditable()}
+            >
+              <SvgIcon
+                sx={{ color: 'white' }}
+                component={editable ? LockOpenOutlined : LockOutlined}
+              />
+            </IconButton>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
