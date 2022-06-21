@@ -2,9 +2,10 @@ import { initializeApp } from 'firebase/app'
 import { getFirestore, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore'
 
 /**
- * NOTE: 일반적으로 API Key 같은건 저장소나 환경 변수 같은걸로 숨겨두지만
- * firebase의 API Key는 공개되어도 괜찮다고 합니다.
- * @see https://haranglog.tistory.com/25
+ * NOTE:
+ * firebase의 API Key는 적절한 조치를 취해두면 공개되어도 괜찮습니다.
+ * 이 프로젝트에서는 HTTP 레퍼러 제한을 걸어둡니다.
+ * @see https://firebase.google.com/docs/projects/api-keys#apply-restrictions
  */
 const firebaseConfig = {
   apiKey: 'AIzaSyCYKd6Cd_MW1kfKzXt1xVzqq1vxglGbZAY',
@@ -18,6 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 export default getFirestore(app)
 
+/** Firestore 문서와 코드쪽 도메인 모델을 변환 */
 export function getDefaultConverter<T> () {
   return {
     toFirestore (_: T) {

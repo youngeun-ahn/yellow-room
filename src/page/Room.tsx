@@ -9,8 +9,8 @@ import SongModalProvider, { useSongModalContext } from '@component/SongModal/Son
 import SongModal from '@component/SongModal/SongModal'
 
 function Room () {
-  const { id = '' } = useParams()
-  const { room } = useRoom(id)
+  const { id: roomId = '' } = useParams()
+  const { room } = useRoom(roomId)
   const [keyword, setKeyword] = useState('')
 
   const { openModal } = useSongModalContext()
@@ -20,11 +20,11 @@ function Room () {
     groupBy,
     isSuccess,
     isError,
-  } = useSongList(id)
+  } = useSongList(roomId)
 
   const hasSong = isSuccess && filter(keyword).length > 0
 
-  if (!id) {
+  if (!roomId) {
     return <Navigate to="/" />
   }
   return (

@@ -5,8 +5,9 @@ import { useSongModalContext } from './SongModalProvider'
 
 interface Props {
   onSave: () => void
+  onReset: () => void
 }
-function Header ({ onSave }: Props) {
+function Header ({ onSave, onReset }: Props) {
   const {
     open, mode,
     isNew, isEditable, isReadonly,
@@ -28,6 +29,9 @@ function Header ({ onSave }: Props) {
 
   const onToggleEditable = useCallback(() => {
     if (isNew) return
+    if (isEditable) {
+      onReset()
+    }
     setMode(isEditable ? 'READ' : 'EDIT')
   }, [mode])
 
@@ -49,9 +53,9 @@ function Header ({ onSave }: Props) {
         <Typography variant="h6" className="flex-auto">
           {title}
         </Typography>
-        <Box className="f-row">
+        <Box className="f-row-4">
           {/* 저장 */}
-          {isEditable && (
+          {!isReadonly && (
             <IconButton onClick={onClickSave}>
               <Save htmlColor="white" />
             </IconButton>

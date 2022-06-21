@@ -1,3 +1,4 @@
+import { useSong } from '@core/query'
 import {
   Drawer, Autocomplete, Checkbox,
   DialogContent,
@@ -5,6 +6,7 @@ import {
   Box, Rating, TextField,
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import EmbedYouTube from './EmbedYouTube'
 import GenderToggleButton from './GenderToggleButton'
 import Header from './Header'
@@ -12,7 +14,8 @@ import { useSongModalContext } from './SongModalProvider'
 
 /* Song Modal */
 function SongModal () {
-  const { song, open } = useSongModalContext()
+  const { id: roomId = '' } = useParams()
+  const { song, open, isReadonly } = useSongModalContext()
 
   const {
     register,
@@ -20,18 +23,24 @@ function SongModal () {
     getFieldState,
     setValue,
     handleSubmit,
+    reset,
   } = useForm<Song>({
     defaultValues: song,
   })
 
+  const { editSong } = useSong(roomId, song?.id)
+
+  const onSave = handleSubmit(editSong)
+  const onReset = () => reset()
+
   return (
     <>
-      <Header onSave={() => {}} />
+      <Header onSave={onSave} onReset={onReset} />
       <Drawer open={open} closeAfterTransition anchor="bottom">
-        <DialogContent className="h-screen !pt-[4.8rem] bg-yellow-50">
+        <DialogContent className="h-screen !pt-[4.8rem] sm:!pt-[6.4rem] bg-yellow-50">
           <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap">
             {/* 번호, 키 */}
-            <Box className="f-row-start-8 !items-end">
+            <Box className="f-row-8 !items-end">
               <TextField
                 label="번호"
                 variant="standard" type="number" required
@@ -41,27 +50,33 @@ function SongModal () {
                 })}
                 error={Boolean(getFieldState('number').error)}
                 helperText={getFieldState('number').error?.message}
+                disabled={isReadonly}
               />
-              <TextField
-                label="키"
-                variant="standard" type="number"
-                className="w-[6rem]"
-                {...register('key')}
-                InputProps={{
-                  endAdornment: (
-                    <GenderToggleButton
-                      gender={watch('gender')}
-                      onChange={gender => setValue('gender', gender)}
-                    />
-                  ),
-                }}
-              />
-              <TextField
-                label="템포"
-                variant="standard" type="number"
-                className="w-[6rem]"
-                {...register('tempo')}
-              />
+              <Box className="f-row-8">
+                <TextField
+                  label="키"
+                  variant="standard" type="number"
+                  className="w-[6rem]"
+                  {...register('key')}
+                  InputProps={{
+                    endAdornment: (
+                      <GenderToggleButton
+                        gender={watch('gender')}
+                        onChange={gender => setValue('gender', gender)}
+                        disabled={isReadonly}
+                      />
+                    ),
+                  }}
+                  disabled={isReadonly}
+                />
+                <TextField
+                  label="템포"
+                  variant="standard" type="number"
+                  className="w-[6rem]"
+                  {...register('tempo')}
+                  disabled={isReadonly}
+                />
+              </Box>
             </Box>
             {/* 노래 제목 */}
             <TextField
@@ -73,6 +88,7 @@ function SongModal () {
               })}
               error={Boolean(getFieldState('title').error)}
               helperText={getFieldState('title').error?.message}
+              disabled={isReadonly}
             />
             {/* 가수 */}
             <Autocomplete
@@ -87,6 +103,7 @@ function SongModal () {
                   {...register('singer')}
                 />
               )}
+              disabled={isReadonly}
             />
             {/* 원작 */}
             <Autocomplete
@@ -101,6 +118,7 @@ function SongModal () {
                 />
               )}
               {...register('origin')}
+              disabled={isReadonly}
             />
             <Box className="f-row-start-24 !items-end">
               {/* 선호도 */}
@@ -110,6 +128,7 @@ function SongModal () {
                   size="large"
                   value={watch('rating')}
                   onChange={(_, rating) => setValue('rating', rating ?? 0)}
+                  readOnly={isReadonly}
                 />
               </FormControl>
               {/* 블랙리스트 여부 */}
@@ -123,28 +142,26 @@ function SongModal () {
                     onChange={(_, checked) => setValue('isBlacklist', checked)}
                   />
                 )}
+                disabled={isReadonly}
               />
             </Box>
             {/* 태그 */}
             <Autocomplete
-              freeSolo
               multiple
               options={[]}
-              renderInput={props => (
+              defaultValue={[]}
+              freeSolo
+              renderInput={params => (
                 <TextField
-                  {...props}
-                  label="#태그_목록"
+                  {...params}
                   variant="standard"
-                  error={Boolean(getFieldState('tagList').error)}
-                  helperText={getFieldState('tagList').error?.message}
+                  label="태그"
                 />
               )}
-              {...register('tagList', {
-                maxLength: {
-                  value: 10,
-                  message: '최대 10개까지 태그를 지정할 수 있습니다.',
-                },
-              })}
+              value={watch('tagList')}
+              onChange={(_, tagList) => setValue('tagList', tagList.flat())}
+              disabled={isReadonly}
+              clearOnBlur
             />
             {/* 메모 */}
             <TextField
@@ -155,6 +172,7 @@ function SongModal () {
                 inputProps: { maxLength: 1024 },
               }}
               {...register('memo')}
+              disabled={isReadonly}
             />
             {/* 가사 */}
             <TextField
@@ -163,11 +181,13 @@ function SongModal () {
               multiline rows={4}
               inputProps={{ maxLength: 1024 }}
               {...register('lyric')}
+              disabled={isReadonly}
             />
             {/* 동영상 */}
             <EmbedYouTube
               youtube={watch('youtube')}
               onChange={youtube => setValue('youtube', youtube)}
+              readOnly={isReadonly}
             />
           </Box>
         </DialogContent>

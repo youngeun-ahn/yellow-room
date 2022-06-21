@@ -12,30 +12,31 @@ const GENDER_MAP = {
 interface Props {
   gender: Gender
   onChange: (gender: Gender) => void
+  disabled?: boolean
 }
 
-function GenderToggleButton ({ gender, onChange }: Props) {
-  const iconProps = useMemo(() => {
+function GenderToggleButton ({ gender, onChange, disabled }: Props) {
+  const genderIcon = useMemo(() => {
     switch (gender) {
       case 'MAN':
         return {
-          component: Man,
-          htmlColor: 'blue',
+          icon: Man,
+          color: 'blue',
         }
       case 'WOMAN':
         return {
-          component: Woman,
-          htmlColor: 'red',
+          icon: Woman,
+          color: 'red',
         }
       case 'BOTH':
         return {
-          component: Wc,
-          htmlColor: 'purple',
+          icon: Wc,
+          color: 'violet',
         }
       case 'NONE':
         return {
-          component: Wc,
-          htmlColor: 'gray',
+          icon: Wc,
+          color: 'gray',
         }
       default:
     }
@@ -46,8 +47,13 @@ function GenderToggleButton ({ gender, onChange }: Props) {
     <IconButton
       disableRipple size="small"
       onClick={() => onChange(GENDER_MAP[gender])}
+      disabled={disabled}
     >
-      <SvgIcon {...iconProps} fontSize="small" />
+      <SvgIcon
+        component={genderIcon.icon!}
+        fontSize="small"
+        sx={{ color: genderIcon.color }}
+      />
     </IconButton>
   )
 }

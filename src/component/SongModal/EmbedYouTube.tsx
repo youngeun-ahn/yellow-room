@@ -8,8 +8,9 @@ import { useForm } from 'react-hook-form'
 interface Props {
   youtube: string
   onChange: (youtube: string) => void
+  readOnly?: boolean
 }
-function EmbedYouTube ({ youtube, onChange }: Props) {
+function EmbedYouTube ({ youtube, onChange, readOnly }: Props) {
   const {
     register,
     handleSubmit,
@@ -25,65 +26,67 @@ function EmbedYouTube ({ youtube, onChange }: Props) {
           videoId={getVideoId(youtube).id ?? ''}
           opts={{
             width: '100%',
-            height: '280px',
+            height: '300px',
           }}
         />
       )}
-      <PopupState variant="popper">
-        {popupState => (
-          <>
-            <Button
-              variant="contained"
-              onClick={popupState.open}
-              className="!bg-red-600"
-            >
-              <YouTubeIcon fontSize="large" />
-            </Button>
-            <Dialog
-              open={popupState.isOpen}
-              className="!z-[10000]"
-            >
-              <DialogTitle fontWeight="bold">
-                YouTube 링크
-              </DialogTitle>
-              <DialogContent>
-                <TextField
-                  placeholder="e.g) https://www.youtube.com/watch?v=..."
-                  variant="standard" fullWidth
-                  className="!min-w-[18rem]"
-                  {...register('youtube', {
-                    validate (link) {
-                      const trimmed = link.trim()
-                      if (!trimmed) return undefined
-                      const { id, service } = getVideoId(trimmed)
-                      if (!id || service !== 'youtube') {
-                        return '정상적인 YouTube 동영상 주소를 입력해주세요.'
-                      }
-                      return undefined
-                    },
-                  })}
-                />
-              </DialogContent>
-              <DialogActions className="!px-12 !pb-12">
-                <Button
-                  onClick={popupState.close}
-                >
-                  닫기
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit(form => {
-                    onChange(form.youtube)
-                    popupState.close()
-                  })}
-                >
-                  확인
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </>
-        )}
-      </PopupState>
+      {!readOnly && (
+        <PopupState variant="popper">
+          {popupState => (
+            <>
+              <Button
+                variant="contained"
+                onClick={popupState.open}
+                className="!bg-red-600"
+              >
+                <YouTubeIcon fontSize="large" />
+              </Button>
+              <Dialog
+                open={popupState.isOpen}
+                className="!z-[10000]"
+              >
+                <DialogTitle fontWeight="bold">
+                  YouTube 링크
+                </DialogTitle>
+                <DialogContent>
+                  <TextField
+                    placeholder="e.g) https://www.youtube.com/watch?v=..."
+                    variant="standard" fullWidth
+                    className="!min-w-[18rem]"
+                    {...register('youtube', {
+                      validate (link) {
+                        const trimmed = link.trim()
+                        if (!trimmed) return undefined
+                        const { id, service } = getVideoId(trimmed)
+                        if (!id || service !== 'youtube') {
+                          return '정상적인 YouTube 동영상 주소를 입력해주세요.'
+                        }
+                        return undefined
+                      },
+                    })}
+                  />
+                </DialogContent>
+                <DialogActions className="!px-12 !pb-12">
+                  <Button
+                    onClick={popupState.close}
+                  >
+                    닫기
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={handleSubmit(form => {
+                      onChange(form.youtube)
+                      popupState.close()
+                    })}
+                  >
+                    확인
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          )}
+        </PopupState>
+      )}
     </Box>
   )
 }

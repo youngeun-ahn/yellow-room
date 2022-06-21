@@ -1,7 +1,7 @@
 declare type Gender = 'MAN' | 'WOMAN' | 'BOTH' | 'NONE'
 
 declare interface Song {
-  id: number
+  id: string
   number: number
   key: number
   gender: Gender

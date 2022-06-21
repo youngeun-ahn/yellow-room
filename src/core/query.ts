@@ -5,7 +5,6 @@ import {
   useFirestoreDocumentData,
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
-import { useMemo } from 'react'
 import sha1 from 'sha1'
 import { useDeepCompareCallback } from 'use-deep-compare'
 import { groupBy } from 'lodash'
@@ -21,6 +20,20 @@ export interface Room {
 const ROOT = 'Room'
 const SONG_LIST = 'Song'
 const roomConverter = getDefaultConverter<Room>()
+const songConverter = getDefaultConverter<Song>()
+
+const getRoomCollectionRef = () => (
+  collection(firestore, ROOT).withConverter(roomConverter)
+)
+const getRoomDocRef = (roomId: string) => (
+  doc(firestore, ROOT, roomId).withConverter(roomConverter)
+)
+const getSongCollectionRef = (roomId: string) => (
+  collection(firestore, ROOT, roomId, SONG_LIST).withConverter(songConverter)
+)
+const getSongDocRef = (roomId: string, songId: string) => (
+  doc(firestore, ROOT, roomId, SONG_LIST, songId).withConverter(songConverter)
+)
 
 const hash = (str: string) => {
   if (!str?.trim()) return ''
@@ -28,24 +41,24 @@ const hash = (str: string) => {
 }
 
 export const useRoomList = (roomName = '') => {
-  const rootRef = collection(firestore, ROOT).withConverter(roomConverter)
-  const ref = query(rootRef)
+  const roomCollectionRef = getRoomCollectionRef()
+  const roomCollectionQuery = query(roomCollectionRef)
   const {
     data = [],
     ...result
-  } = useFirestoreQueryData([ROOT], ref)
+  } = useFirestoreQueryData([ROOT], roomCollectionQuery)
   const roomList = data.filter(_ => isKeywordIncludes(_.name, roomName))
 
   return { roomList, ...result }
 }
 
 export const useNewRoom = () => {
-  const roomId = useMemo(() => nanoid(5), [])
-  const docRef = doc(firestore, ROOT, roomId)
+  const roomId = nanoid(5)
+  const roomDocRef = getRoomDocRef(roomId)
   const {
     mutate,
     ...result
-  } = useFirestoreDocumentMutation(docRef)
+  } = useFirestoreDocumentMutation(roomDocRef)
 
   return {
     ...result,
@@ -54,15 +67,14 @@ export const useNewRoom = () => {
       id: roomId,
       name: roomName,
       pwd: hash(roomPwd),
-      items: [],
     }),
   }
 }
 
 export const useFindRoom = (roomName = '', roomPwd = '') => {
-  const rootRef = collection(firestore, ROOT).withConverter(roomConverter)
-  const ref = query(
-    rootRef,
+  const roomCollectionRef = getRoomCollectionRef()
+  const roomCollectionQuery = query(
+    roomCollectionRef,
     where('name', '==', roomName),
     where('pwd', '==', hash(roomPwd)),
   )
@@ -70,7 +82,7 @@ export const useFindRoom = (roomName = '', roomPwd = '') => {
   const {
     data: roomList = [],
     ...result
-  } = useFirestoreQueryData([ROOT, roomName, roomPwd], ref)
+  } = useFirestoreQueryData([ROOT, roomName, roomPwd], roomCollectionQuery)
 
   return {
     room: roomList[0],
@@ -79,21 +91,18 @@ export const useFindRoom = (roomName = '', roomPwd = '') => {
 }
 
 export const useRoom = (roomId: string) => {
-  const docRef = doc(firestore, ROOT, roomId).withConverter(getDefaultConverter<Room>())
+  const roomDocRef = getRoomDocRef(roomId)
   const {
     data: room,
     ...result
-  } = useFirestoreDocumentData([ROOT, roomId], docRef, {
-
-  })
+  } = useFirestoreDocumentData([ROOT, roomId], roomDocRef)
   return { room, ...result }
 }
 
 export const useSongList = (roomId: string) => {
-  const songListRef = collection(firestore, ROOT, roomId, SONG_LIST)
-    .withConverter(getDefaultConverter<Song>())
+  const songCollectionRef = getSongCollectionRef(roomId)
   const ref = query(
-    songListRef,
+    songCollectionRef,
     orderBy('origin'),
     orderBy('title'),
     orderBy('rating'),
@@ -129,5 +138,23 @@ export const useSongList = (roomId: string) => {
     groupBy: groupByOrigin,
     songList,
     ...result,
+  }
+}
+
+export const useSong = (roomId: string, songId?: string) => {
+  const songDocId = songId ?? nanoid(5)
+  const songDocRef = getSongDocRef(roomId, songDocId)
+  const {
+    mutate,
+    ...result
+  } = useFirestoreDocumentMutation(songDocRef)
+
+  return {
+    ...result,
+    songId,
+    editSong: (song: Song) => mutate({
+      ...song,
+      id: songDocId,
+    }),
   }
 }
