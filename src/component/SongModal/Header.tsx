@@ -35,11 +35,6 @@ function Header ({ onSave, onReset }: Props) {
     setMode(isEditable ? 'READ' : 'EDIT')
   }, [mode])
 
-  const onClickSave = () => {
-    onSave()
-    closeModal()
-  }
-
   if (!open) return <></>
 
   return (
@@ -56,7 +51,7 @@ function Header ({ onSave, onReset }: Props) {
         <Box className="f-row-4">
           {/* 저장 */}
           {!isReadonly && (
-            <IconButton onClick={onClickSave}>
+            <IconButton onClick={onSave}>
               <Save htmlColor="white" />
             </IconButton>
           )}

@@ -1,21 +1,37 @@
-import { useSong } from '@core/query'
+import { useSong, useSongList } from '@core/query'
+import { InfoOutlined } from '@mui/icons-material'
 import {
   Drawer, Autocomplete, Checkbox,
   DialogContent,
   FormControl, FormControlLabel, FormLabel,
   Box, Rating, TextField,
 } from '@mui/material'
-import { useForm } from 'react-hook-form'
+import { sortedUniq } from 'lodash'
+import { Controller, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import EmbedYouTube from './EmbedYouTube'
 import GenderToggleButton from './GenderToggleButton'
 import Header from './Header'
 import { useSongModalContext } from './SongModalProvider'
 
+function uniqSort (list: string[]) {
+  return sortedUniq(
+    list
+      .map(_ => _.trim())
+      .filter(_ => _) // remove empty
+      .sort(),
+  )
+}
+
 /* Song Modal */
 function SongModal () {
   const { id: roomId = '' } = useParams()
-  const { song, open, isReadonly } = useSongModalContext()
+  const { song, open, isReadonly, closeModal } = useSongModalContext()
+
+  const { songList } = useSongList(roomId)
+  const singerList = uniqSort(songList.map(_ => _.singer))
+  const originList = uniqSort(songList.map(_ => _.origin))
+  const tagList = uniqSort(songList.flatMap(_ => _.tagList))
 
   const {
     register,
@@ -24,32 +40,64 @@ function SongModal () {
     setValue,
     handleSubmit,
     reset,
+    control,
   } = useForm<Song>({
+    mode: 'all',
+    reValidateMode: 'onChange',
     defaultValues: song,
   })
 
   const { editSong } = useSong(roomId, song?.id)
 
-  const onSave = handleSubmit(editSong)
-  const onReset = () => reset()
+  const onSave = handleSubmit(form => {
+    editSong(form, {
+      onSuccess () {
+        closeModal()
+      },
+    })
+  })
 
   return (
     <>
-      <Header onSave={onSave} onReset={onReset} />
+      <Header
+        onSave={onSave}
+        onReset={() => reset(song)}
+      />
       <Drawer open={open} closeAfterTransition anchor="bottom">
         <DialogContent className="h-screen !pt-[4.8rem] sm:!pt-[6.4rem] bg-yellow-50">
           <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap">
             {/* 번호, 키 */}
-            <Box className="f-row-8 !items-end">
+            <Box className="f-row-8 !items-start">
               <TextField
                 label="번호"
                 variant="standard" type="number" required
                 className="w-[6rem]"
                 {...register('number', {
-                  required: '번호는 반드시 입력해야 합니다.',
+                  required: '노래 번호는 반드시 입력해야 합니다.',
+                  validate (number) {
+                    const foundSong = songList.find(_ => _.number === number)
+                    if (foundSong?.number === song?.number) {
+                      return undefined
+                    }
+                    if (foundSong) {
+                      return `이미 등록된 노래 번호 입니다(${foundSong.title}).`
+                    }
+                    return undefined
+                  },
                 })}
                 error={Boolean(getFieldState('number').error)}
-                helperText={getFieldState('number').error?.message}
+                helperText={getFieldState('number').error && (
+                  <>
+                    <InfoOutlined />
+                    <Box
+                      component="span"
+                      color="red"
+                      className="w-fit max-w-xs whitespace-nowrap"
+                    >
+                      {getFieldState('number').error?.message}
+                    </Box>
+                  </>
+                )}
                 disabled={isReadonly}
               />
               <Box className="f-row-8">
@@ -91,77 +139,127 @@ function SongModal () {
               disabled={isReadonly}
             />
             {/* 가수 */}
-            <Autocomplete
-              freeSolo
-              options={[]}
-              renderInput={props => (
-                <TextField
-                  {...props}
-                  label="가수"
-                  variant="standard"
-                  inputProps={{ maxLength: 64 }}
-                  {...register('singer')}
+            <Controller
+              name="singer"
+              render={({ field }) => (
+                <Autocomplete
+                  id="select-singer"
+                  freeSolo autoSelect
+                  clearOnEscape clearOnBlur
+                  options={singerList}
+                  value={field.value ?? ''}
+                  onChange={(_, nextSinger) => setValue('singer', nextSinger ?? '')}
+                  renderInput={({ InputProps, inputProps, ...params }) => (
+                    <TextField
+                      {...params}
+                      label="가수"
+                      variant="standard"
+                      InputProps={{
+                        ...InputProps,
+                        inputProps: {
+                          ...inputProps,
+                          maxLength: 64,
+                        },
+                      }}
+                    />
+                  )}
+                  disabled={isReadonly}
                 />
               )}
-              disabled={isReadonly}
+              control={control}
             />
             {/* 원작 */}
-            <Autocomplete
-              freeSolo
-              options={[]}
-              renderInput={props => (
-                <TextField
-                  {...props}
-                  label="작품 (영화, 드라마, 게임 등)"
-                  variant="standard"
-                  inputProps={{ maxLength: 64 }}
+            <Controller
+              name="origin"
+              render={({ field }) => (
+                <Autocomplete
+                  id="select-origin"
+                  freeSolo autoSelect
+                  clearOnEscape clearOnBlur
+                  options={originList}
+                  value={field.value}
+                  onChange={(_, nextOrigin) => setValue('origin', nextOrigin ?? '')}
+                  renderInput={({ InputProps, inputProps, ...params }) => (
+                    <TextField
+                      {...params}
+                      label="작품 (영화, 드라마, 게임 등)"
+                      variant="standard"
+                      InputProps={{
+                        ...InputProps,
+                        inputProps: {
+                          ...inputProps,
+                          maxLength: 64,
+                        },
+                      }}
+                    />
+                  )}
+                  disabled={isReadonly}
                 />
               )}
-              {...register('origin')}
-              disabled={isReadonly}
+              control={control}
             />
             <Box className="f-row-start-24 !items-end">
               {/* 선호도 */}
-              <FormControl className="f-col">
-                <FormLabel className="mb-8">선호도</FormLabel>
-                <Rating
-                  size="large"
-                  value={watch('rating')}
-                  onChange={(_, rating) => setValue('rating', rating ?? 0)}
-                  readOnly={isReadonly}
+              <FormControl className="f-col-8">
+                <FormLabel>선호도</FormLabel>
+                <Controller
+                  name="rating"
+                  render={({ field }) => (
+                    <Rating
+                      size="large"
+                      value={field.value}
+                      readOnly={isReadonly}
+                      onChange={(_, nextRating) => setValue('rating', nextRating ?? 0)}
+                    />
+                  )}
+                  control={control}
                 />
               </FormControl>
               {/* 블랙리스트 여부 */}
-              <FormControlLabel
-                label="블랙리스트?"
-                control={(
-                  <Checkbox
-                    disableRipple
-                    className="!p-2 !mr-2"
-                    value={watch('isBlacklist')}
-                    onChange={(_, checked) => setValue('isBlacklist', checked)}
+              <Controller
+                name="isBlacklist"
+                render={({ field }) => (
+                  <FormControlLabel
+                    label="블랙리스트?"
+                    control={(
+                      <Checkbox
+                        disableRipple
+                        className="!p-2 !mr-2"
+                        value={field.value}
+                        onChange={(_, checked) => setValue('isBlacklist', checked)}
+                      />
+                    )}
+                    disabled={isReadonly}
                   />
                 )}
-                disabled={isReadonly}
+                control={control}
+                defaultValue={false}
               />
             </Box>
             {/* 태그 */}
-            <Autocomplete
-              multiple
-              options={[]}
-              defaultValue={[]}
-              freeSolo
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="태그"
+            <Controller
+              name="tagList"
+              render={({ field }) => (
+                <Autocomplete
+                  id="select-tag-list"
+                  freeSolo autoSelect multiple
+                  clearOnEscape clearOnBlur
+                  options={tagList}
+                  value={uniqSort(field.value)}
+                  onChange={(_, nextTagList) => {
+                    setValue('tagList', uniqSort(nextTagList))
+                  }}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="태그"
+                    />
+                  )}
+                  disabled={isReadonly}
                 />
               )}
-              value={watch('tagList')}
-              onChange={(_, tagList) => setValue('tagList', tagList.flat())}
-              disabled={isReadonly}
-              clearOnBlur
+              control={control}
             />
             {/* 메모 */}
             <TextField
@@ -184,10 +282,17 @@ function SongModal () {
               disabled={isReadonly}
             />
             {/* 동영상 */}
-            <EmbedYouTube
-              youtube={watch('youtube')}
-              onChange={youtube => setValue('youtube', youtube)}
-              readOnly={isReadonly}
+            <Controller
+              name="youtube"
+              render={({ field }) => (
+                <EmbedYouTube
+                  youtube={field.value ?? ''}
+                  onChange={nextYoutube => setValue('youtube', nextYoutube)}
+                  readOnly={isReadonly}
+                />
+              )}
+              control={control}
+              defaultValue=""
             />
           </Box>
         </DialogContent>

@@ -147,14 +147,19 @@ export const useSong = (roomId: string, songId?: string) => {
   const {
     mutate,
     ...result
-  } = useFirestoreDocumentMutation(songDocRef)
+  } = useFirestoreDocumentMutation(songDocRef, {
+    merge: false,
+  })
 
   return {
     ...result,
     songId,
-    editSong: (song: Song) => mutate({
+    editSong: (
+      song: Song,
+      options?: Parameters<typeof mutate>[1],
+    ) => mutate({
       ...song,
       id: songDocId,
-    }),
+    }, options),
   }
 }
