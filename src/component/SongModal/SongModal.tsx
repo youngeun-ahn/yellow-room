@@ -1,4 +1,4 @@
-import { useEditSong, useSongList } from '@core/query'
+import { useDeleteSong, useEditSong, useSongList } from '@core/query'
 import { toTagList, uniqSort } from '@core/util'
 import { InfoOutlined } from '@mui/icons-material'
 import {
@@ -66,11 +66,15 @@ function SongModal () {
     )
   })
 
+  const { deleteSong } = useDeleteSong(roomId, song?.id)
+  const onDelete = () => deleteSong({ onSuccess: closeModal })
+
   return (
     <>
       <Header
         onSave={onSave}
         onReset={() => reset(song)}
+        onDelete={onDelete}
       />
       <Drawer open={open} closeAfterTransition anchor="bottom">
         <DialogContent className="h-screen !pt-[4.8rem] sm:!pt-[6.4rem] bg-yellow-50">

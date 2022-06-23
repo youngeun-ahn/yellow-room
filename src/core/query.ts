@@ -3,6 +3,7 @@ import {
   useFirestoreQueryData,
   useFirestoreDocumentMutation,
   useFirestoreDocumentData,
+  useFirestoreDocumentDeletion,
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
@@ -34,10 +35,10 @@ const getSongDocRef = (roomId: string, songId: string) => (
   doc(firestore, ROOT, roomId, SONG_LIST, songId).withConverter(songConverter)
 )
 
+/** Room 생성 */
 export const useCreateRoom = () => {
   const roomId = nanoid(5)
   const roomDocRef = getRoomDocRef(roomId)
-
   const { mutate, ...result } = useFirestoreDocumentMutation(roomDocRef)
 
   return {
@@ -53,6 +54,7 @@ export const useCreateRoom = () => {
   }
 }
 
+/** Room 체크인 */
 export const useFindRoom = (roomName = '', roomPwd = '') => {
   const roomCollectionRef = getRoomCollectionRef()
   const roomCollectionQuery = query(
@@ -72,6 +74,7 @@ export const useFindRoom = (roomName = '', roomPwd = '') => {
   }
 }
 
+/** Room 상세 정보 */
 export const useRoom = (roomId: string) => {
   const roomDocRef = getRoomDocRef(roomId)
   const {
@@ -81,6 +84,7 @@ export const useRoom = (roomId: string) => {
   return { room, ...result }
 }
 
+/** Song 목록 조회 */
 export const useSongList = (roomId: string) => {
   const songCollectionRef = getSongCollectionRef(roomId)
   const ref = query(
@@ -109,7 +113,7 @@ export const useSongList = (roomId: string) => {
         () => isKeywordIncludes(song.origin, keyword),
         () => isKeywordIncludes(song.number.toString(), keyword),
         () => song.tagList.some(tag => isKeywordIncludes(tag, keyword)),
-      ].some(_ => _()) // lazy & shortcut
+      ].some(lazyExp => lazyExp())
     ))
   }, [songList])
 
@@ -125,17 +129,34 @@ export const useSongList = (roomId: string) => {
   }
 }
 
+/** Song 편집(및 신규 등록) */
 export const useEditSong = (roomId: string, songId?: string) => {
   const songDocId = songId ?? nanoid(5)
   const songDocRef = getSongDocRef(roomId, songDocId)
-
   const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef)
 
   return {
     ...result,
-    songId,
+    songDocId,
     editSong: (songForm: Song, options?: Parameters<typeof mutate>[1]) => {
       mutate({ ...songForm, id: songDocId }, options)
+    },
+  }
+}
+
+const EMPTY_SONG_ID = 'EMPTY_SONG_ID'
+/** Song 삭제 */
+export const useDeleteSong = (roomId: string, songId = EMPTY_SONG_ID) => {
+  // NOTE: 신규 생성시에도 hook 규칙 때문에 호출되어야 해서 songId가 없을 수 있는데
+  // 이 경우, firestore 문서를 가져올때 문제가 발생하여 더미 문서 ID로 처리.
+  const songDocRef = getSongDocRef(roomId, songId)
+  const { mutate, ...result } = useFirestoreDocumentDeletion(songDocRef)
+
+  return {
+    ...result,
+    deleteSong: (options?: Parameters<typeof mutate>[1]) => {
+      if (!songId || songId === EMPTY_SONG_ID) return
+      mutate(undefined, options)
     },
   }
 }

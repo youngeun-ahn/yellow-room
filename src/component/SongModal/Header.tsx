@@ -1,4 +1,4 @@
-import { Close, LockOpenOutlined, LockOutlined, Save } from '@mui/icons-material'
+import { Close, Delete, Edit, Replay, Save } from '@mui/icons-material'
 import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box } from '@mui/material'
 import { useCallback, useMemo } from 'react'
 import { useSongModalContext } from './SongModalProvider'
@@ -6,8 +6,9 @@ import { useSongModalContext } from './SongModalProvider'
 interface Props {
   onSave: () => void
   onReset: () => void
+  onDelete: () => void
 }
-function Header ({ onSave, onReset }: Props) {
+function Header ({ onSave, onReset, onDelete }: Props) {
   const {
     open, mode,
     isNew, isEditable, isReadonly,
@@ -48,7 +49,13 @@ function Header ({ onSave, onReset }: Props) {
         <Typography variant="h6" className="flex-auto">
           {title}
         </Typography>
-        <Box className="f-row-4">
+        <Box className="f-row sm:gap-4">
+          {/* 삭제 */}
+          {!isReadonly && !isNew && (
+            <IconButton onClick={onDelete}>
+              <Delete htmlColor="white" />
+            </IconButton>
+          )}
           {/* 저장 */}
           {!isReadonly && (
             <IconButton onClick={onSave}>
@@ -60,7 +67,7 @@ function Header ({ onSave, onReset }: Props) {
             <IconButton onClick={onToggleEditable}>
               <SvgIcon
                 sx={{ color: 'white' }}
-                component={isEditable ? LockOpenOutlined : LockOutlined}
+                component={isEditable ? Replay : Edit}
               />
             </IconButton>
           )}

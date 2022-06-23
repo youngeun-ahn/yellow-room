@@ -1,4 +1,3 @@
-import { ChangeEvent } from 'react'
 import {
   Autocomplete, Box, TextField, Typography,
 } from '@mui/material'
@@ -16,39 +15,39 @@ interface RoomForm {
 
 function Login () {
   /* Room List Autocomplete */
-  const [roomList] = useLocalStorage('myRoomList', [])
+  const [roomList] = useLocalStorage<string[]>('myRoomList', [])
 
   /* Forms */
-  const roomForm = useForm<RoomForm>({
+  const {
+    control,
+    watch,
+    formState,
+    register,
+    handleSubmit,
+  } = useForm<RoomForm>({
     mode: 'all',
     defaultValues: {
       roomName: '',
       roomPwd: '',
     },
   })
-  const onChange = (field: keyof RoomForm) => (e: ChangeEvent<HTMLInputElement>) => {
-    const trimmed = e.target.value.trimStart()
-    roomForm.setValue(field, trimmed)
-  }
-  const onBlur = (field: keyof RoomForm) => () => {
-    const trimmed = roomForm.getValues()[field].trim()
-    roomForm.setValue(field, trimmed)
-  }
-  const { roomName, roomPwd } = roomForm.getValues()
-  const { errors, dirtyFields } = roomForm.formState
+  const { roomName, roomPwd } = watch()
+  const { errors, dirtyFields } = formState
 
   /* Login */
   const navigate = useNavigate()
-  const { room } = useFindRoom(roomName.trim(), roomPwd.trim())
+  const { room } = useFindRoom(roomName.trim(), roomPwd)
+
   const {
     createRoom,
     roomId: newRoomId,
     isLoading: isLoadingNewRoom,
   } = useCreateRoom()
-  const onClickEnter = roomForm.handleSubmit(() => {
+
+  const onClickEnter = handleSubmit(() => {
     // 없는 방이면 firebase 문서 생성하고 redirect
     if (!room) {
-      createRoom(roomName.trim(), roomPwd.trim())
+      createRoom(roomName.trim(), roomPwd)
       navigate(`/room/${newRoomId}`, { replace: true })
       return
     }
@@ -70,19 +69,12 @@ function Login () {
         <Box className="f-col-4">
           <Controller
             name="roomName"
-            control={roomForm.control}
+            control={control}
             rules={{
-              required: {
-                value: true,
-                message: '방 이름은 2글자 이상이어야 합니다.',
-              },
+              required: '방 이름을 입력해주세요.',
               minLength: {
                 value: 2,
                 message: '방 이름은 2글자 이상이어야 합니다.',
-              },
-              maxLength: {
-                value: 24,
-                message: '방 이름은 24글자 이하여야 합니다.',
               },
             }}
             render={({ field, fieldState }) => (
@@ -127,7 +119,7 @@ function Login () {
               variant="standard"
               type="password"
               inputProps={{ maxLength: 16 }}
-              {...roomForm.register('roomPwd', {
+              {...register('roomPwd', {
                 required: false,
                 minLength: {
                   value: 8,
@@ -137,8 +129,6 @@ function Login () {
                   value: 16,
                   message: 'Room Key는 16글자 이하여야 합니다.',
                 },
-                onChange: onChange('roomPwd'),
-                onBlur: onBlur('roomPwd'),
               })}
               helperText={(
                 <Box
@@ -163,10 +153,10 @@ function Login () {
                       동일한 이름의 다른 방을 구분하기 위한 용도입니다.
                     </span>
                   </Box>
-                  <Box component="span" className="f-row-start-4 !flex-nowrap">
-                    <Info className="!text-xs" />
+                  <Box component="span" className="f-row-start-4 !items-start !flex-nowrap">
+                    <Info className="!text-xs mt-2" />
                     <span className="!text-xs">
-                      한번 등록하면 변경할 수 없습니다 (까먹지 마세요!).
+                      한번 등록하면 변경할 수 없지만 생성된 방 링크만으로도 입장할 수 있습니다.
                     </span>
                   </Box>
                 </Box>

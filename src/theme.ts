@@ -25,6 +25,8 @@ const THEME = createTheme({
           },
           '& > span': {
             lineHeight: 0,
+            display: 'flex',
+            flexFlow: 'column nowrap',
           },
         },
       },
