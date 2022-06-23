@@ -5,11 +5,10 @@ import {
   useFirestoreDocumentData,
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
-import sha1 from 'sha1'
 import { useDeepCompareCallback } from 'use-deep-compare'
 import { groupBy } from 'lodash'
 import firestore, { getDefaultConverter } from './firestore'
-import { isKeywordIncludes } from './util'
+import { hash, isKeywordIncludes } from './util'
 
 export interface Room {
   id: string
@@ -35,27 +34,22 @@ const getSongDocRef = (roomId: string, songId: string) => (
   doc(firestore, ROOT, roomId, SONG_LIST, songId).withConverter(songConverter)
 )
 
-const hash = (str: string) => {
-  if (!str?.trim()) return ''
-  return sha1(str)
-}
-
-export const useNewRoom = () => {
+export const useCreateRoom = () => {
   const roomId = nanoid(5)
   const roomDocRef = getRoomDocRef(roomId)
-  const {
-    mutate,
-    ...result
-  } = useFirestoreDocumentMutation(roomDocRef)
+
+  const { mutate, ...result } = useFirestoreDocumentMutation(roomDocRef)
 
   return {
     ...result,
     roomId,
-    createNewRoom: (roomName: string, roomPwd: string) => mutate({
-      id: roomId,
-      name: roomName,
-      pwd: hash(roomPwd),
-    }),
+    createRoom (roomName: string, roomPwd: string) {
+      mutate({
+        id: roomId,
+        name: roomName,
+        pwd: hash(roomPwd),
+      })
+    },
   }
 }
 
@@ -131,33 +125,17 @@ export const useSongList = (roomId: string) => {
   }
 }
 
-export const useSong = (roomId: string, songId?: string) => {
+export const useEditSong = (roomId: string, songId?: string) => {
   const songDocId = songId ?? nanoid(5)
   const songDocRef = getSongDocRef(roomId, songDocId)
 
-  const {
-    refetch: refetchSongList,
-  } = useSongList(roomId)
-
-  const {
-    mutate,
-    ...result
-  } = useFirestoreDocumentMutation(songDocRef, {
-    merge: false,
-  }, {
-    onSuccess () {
-      refetchSongList()
-    },
-  })
+  const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef)
 
   return {
     ...result,
     songId,
-    editSong: (song: Song, options?: Parameters<typeof mutate>[1]) => {
-      mutate({
-        ...song,
-        id: songDocId,
-      }, options)
+    editSong: (songForm: Song, options?: Parameters<typeof mutate>[1]) => {
+      mutate({ ...songForm, id: songDocId }, options)
     },
   }
 }

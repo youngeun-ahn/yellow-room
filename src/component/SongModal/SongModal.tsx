@@ -1,4 +1,4 @@
-import { useSong, useSongList } from '@core/query'
+import { useEditSong, useSongList } from '@core/query'
 import { toTagList, uniqSort } from '@core/util'
 import { InfoOutlined } from '@mui/icons-material'
 import {
@@ -53,8 +53,7 @@ function SongModal () {
     },
   })
 
-  const { editSong } = useSong(roomId, song?.id)
-
+  const { editSong } = useEditSong(roomId, song?.id)
   const onSave = handleSubmit(({ title, singer, origin, ...form }) => {
     editSong(
       {

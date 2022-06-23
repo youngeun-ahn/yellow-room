@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab'
 import { Info, InfoOutlined } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
-import { useNewRoom, useFindRoom } from '@core/query'
+import { useCreateRoom, useFindRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
 
 interface RoomForm {
@@ -41,14 +41,14 @@ function Login () {
   const navigate = useNavigate()
   const { room } = useFindRoom(roomName.trim(), roomPwd.trim())
   const {
-    createNewRoom,
+    createRoom,
     roomId: newRoomId,
     isLoading: isLoadingNewRoom,
-  } = useNewRoom()
+  } = useCreateRoom()
   const onClickEnter = roomForm.handleSubmit(() => {
     // 없는 방이면 firebase 문서 생성하고 redirect
     if (!room) {
-      createNewRoom(roomName.trim(), roomPwd.trim())
+      createRoom(roomName.trim(), roomPwd.trim())
       navigate(`/room/${newRoomId}`, { replace: true })
       return
     }

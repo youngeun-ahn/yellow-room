@@ -1,4 +1,5 @@
 import { sortedUniq } from 'lodash'
+import sha1 from 'sha1'
 
 export const isKeywordIncludes = (
   target: string,
@@ -26,4 +27,9 @@ export function toTagList (str: string) {
     .split(/[#\s]+/g)
     .map(_ => _.trim())
     .filter(_ => _)
+}
+
+export const hash = (str: string) => {
+  if (!str?.trim()) return ''
+  return sha1(str)
 }
