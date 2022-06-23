@@ -6,7 +6,8 @@ import { LoadingButton } from '@mui/lab'
 import { Info, InfoOutlined } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
-import { useNewRoom, useFindRoom, useRoomList } from '@core/query'
+import { useNewRoom, useFindRoom } from '@core/query'
+import useLocalStorage from 'use-local-storage'
 
 interface RoomForm {
   roomName: string
@@ -14,6 +15,9 @@ interface RoomForm {
 }
 
 function Login () {
+  /* Room List Autocomplete */
+  const [roomList] = useLocalStorage('myRoomList', [])
+
   /* Forms */
   const roomForm = useForm<RoomForm>({
     mode: 'all',
@@ -32,10 +36,6 @@ function Login () {
   }
   const { roomName, roomPwd } = roomForm.getValues()
   const { errors, dirtyFields } = roomForm.formState
-  const {
-    roomList,
-    isLoading: isLoadingRoomList,
-  } = useRoomList(roomName)
 
   /* Login */
   const navigate = useNavigate()
@@ -88,11 +88,10 @@ function Login () {
             render={({ field, fieldState }) => (
               <Autocomplete
                 className="w-full"
-                loading={isLoadingRoomList}
                 freeSolo
                 autoSelect
-                options={Array.from(new Set(roomList.map(_ => _.name)))}
-                onChange={(_, v = '') => field.onChange(v ?? '')}
+                options={roomList}
+                onChange={(_, nextRoomName) => field.onChange(nextRoomName ?? '')}
                 renderInput={params => (
                   <TextField
                     error={Boolean(fieldState.error)}

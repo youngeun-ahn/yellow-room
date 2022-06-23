@@ -40,15 +40,10 @@ function GenderToggleButton ({ gender, onChange, disabled }: Props) {
 
   return (
     <IconButton
-      disableRipple size="small"
+      size="small" disabled={disabled}
       onClick={() => onChange(next)}
-      disabled={disabled}
     >
-      <SvgIcon
-        component={icon}
-        fontSize="small"
-        sx={{ color }}
-      />
+      <SvgIcon component={icon} fontSize="small" sx={{ color }} />
     </IconButton>
   )
 }

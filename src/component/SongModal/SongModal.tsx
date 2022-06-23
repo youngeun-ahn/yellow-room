@@ -1,4 +1,5 @@
 import { useSong, useSongList } from '@core/query'
+import { toTagList, uniqSort } from '@core/util'
 import { InfoOutlined } from '@mui/icons-material'
 import {
   Drawer, Autocomplete, Checkbox,
@@ -6,22 +7,12 @@ import {
   FormControl, FormControlLabel, FormLabel,
   Box, Rating, TextField,
 } from '@mui/material'
-import { sortedUniq } from 'lodash'
 import { Controller, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import EmbedYouTube from './EmbedYouTube'
 import GenderToggleButton from './GenderToggleButton'
 import Header from './Header'
 import { useSongModalContext } from './SongModalProvider'
-
-function uniqSort (list: string[]) {
-  return sortedUniq(
-    list
-      .map(_ => _.trim())
-      .filter(_ => _) // remove empty
-      .sort(),
-  )
-}
 
 /* Song Modal */
 function SongModal () {
@@ -36,25 +27,44 @@ function SongModal () {
   const {
     register,
     watch,
-    getFieldState,
     setValue,
     handleSubmit,
     reset,
     control,
+    formState: { errors = {} },
   } = useForm<Song>({
     mode: 'all',
     reValidateMode: 'onChange',
-    defaultValues: song,
+    defaultValues: {
+      // number: 0,
+      key: 0,
+      tempo: 0,
+      gender: 'NONE',
+      title: '',
+      singer: '',
+      origin: '',
+      rating: 0,
+      isBlacklist: false,
+      tagList: [],
+      memo: '',
+      lyric: '',
+      youtube: '',
+      ...song,
+    },
   })
 
   const { editSong } = useSong(roomId, song?.id)
 
-  const onSave = handleSubmit(form => {
-    editSong(form, {
-      onSuccess () {
-        closeModal()
+  const onSave = handleSubmit(({ title, singer, origin, ...form }) => {
+    editSong(
+      {
+        title: title.trim(),
+        singer: singer.trim(),
+        origin: origin.trim(),
+        ...form,
       },
-    })
+      { onSuccess: closeModal },
+    )
   })
 
   return (
@@ -85,8 +95,8 @@ function SongModal () {
                     return undefined
                   },
                 })}
-                error={Boolean(getFieldState('number').error)}
-                helperText={getFieldState('number').error && (
+                error={Boolean(errors.number)}
+                helperText={errors.number?.message && (
                   <>
                     <InfoOutlined />
                     <Box
@@ -94,7 +104,7 @@ function SongModal () {
                       color="red"
                       className="w-fit max-w-xs whitespace-nowrap"
                     >
-                      {getFieldState('number').error?.message}
+                      {errors.number?.message}
                     </Box>
                   </>
                 )}
@@ -134,8 +144,8 @@ function SongModal () {
               {...register('title', {
                 required: '노래 제목은 반드시 입력해야 합니다.',
               })}
-              error={Boolean(getFieldState('title').error)}
-              helperText={getFieldState('title').error?.message}
+              error={Boolean(errors.title)}
+              helperText={errors.title?.message}
               disabled={isReadonly}
             />
             {/* 가수 */}
@@ -147,7 +157,7 @@ function SongModal () {
                   freeSolo autoSelect
                   clearOnEscape clearOnBlur
                   options={singerList}
-                  value={field.value ?? ''}
+                  value={field.value}
                   onChange={(_, nextSinger) => setValue('singer', nextSinger ?? '')}
                   renderInput={({ InputProps, inputProps, ...params }) => (
                     <TextField
@@ -247,13 +257,14 @@ function SongModal () {
                   options={tagList}
                   value={uniqSort(field.value)}
                   onChange={(_, nextTagList) => {
-                    setValue('tagList', uniqSort(nextTagList))
+                    const tags = (nextTagList ?? []).flatMap(toTagList)
+                    setValue('tagList', uniqSort(tags ?? []))
                   }}
                   renderInput={params => (
                     <TextField
                       {...params}
                       variant="standard"
-                      label="태그"
+                      label="태그 (# 또는 공백으로 구분)"
                     />
                   )}
                   disabled={isReadonly}
@@ -286,7 +297,7 @@ function SongModal () {
               name="youtube"
               render={({ field }) => (
                 <EmbedYouTube
-                  youtube={field.value ?? ''}
+                  youtube={field.value}
                   onChange={nextYoutube => setValue('youtube', nextYoutube)}
                   readOnly={isReadonly}
                 />

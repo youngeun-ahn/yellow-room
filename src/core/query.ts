@@ -40,18 +40,6 @@ const hash = (str: string) => {
   return sha1(str)
 }
 
-export const useRoomList = (roomName = '') => {
-  const roomCollectionRef = getRoomCollectionRef()
-  const roomCollectionQuery = query(roomCollectionRef)
-  const {
-    data = [],
-    ...result
-  } = useFirestoreQueryData([ROOT], roomCollectionQuery)
-  const roomList = data.filter(_ => isKeywordIncludes(_.name, roomName))
-
-  return { roomList, ...result }
-}
-
 export const useNewRoom = () => {
   const roomId = nanoid(5)
   const roomDocRef = getRoomDocRef(roomId)
@@ -118,23 +106,25 @@ export const useSongList = (roomId: string) => {
     { enabled: Boolean(roomId) },
   )
 
-  const filter = useDeepCompareCallback((keyword = '') => {
+  const search = useDeepCompareCallback((keyword = '') => {
     if (!keyword) return songList
-    return songList.filter(song => {
-      const isTitleMatched = isKeywordIncludes(song.title, keyword)
-      const isSingerMatched = isKeywordIncludes(song.singer, keyword)
-      const isOriginMatched = isKeywordIncludes(song.origin, keyword)
-      const isTagMatched = song.tagList.some(tag => isKeywordIncludes(tag, keyword))
-      return isTitleMatched || isSingerMatched || isOriginMatched || isTagMatched
-    })
+    return songList.filter(song => (
+      [
+        () => isKeywordIncludes(song.title, keyword),
+        () => isKeywordIncludes(song.singer, keyword),
+        () => isKeywordIncludes(song.origin, keyword),
+        () => isKeywordIncludes(song.number.toString(), keyword),
+        () => song.tagList.some(tag => isKeywordIncludes(tag, keyword)),
+      ].some(_ => _()) // lazy & shortcut
+    ))
   }, [songList])
 
   const groupByOrigin = useDeepCompareCallback((keyword?: string) => (
-    groupBy(filter(keyword), 'origin')
+    groupBy(search(keyword), 'origin')
   ), [songList])
 
   return {
-    filter,
+    search,
     groupBy: groupByOrigin,
     songList,
     ...result,
@@ -144,22 +134,30 @@ export const useSongList = (roomId: string) => {
 export const useSong = (roomId: string, songId?: string) => {
   const songDocId = songId ?? nanoid(5)
   const songDocRef = getSongDocRef(roomId, songDocId)
+
+  const {
+    refetch: refetchSongList,
+  } = useSongList(roomId)
+
   const {
     mutate,
     ...result
   } = useFirestoreDocumentMutation(songDocRef, {
     merge: false,
+  }, {
+    onSuccess () {
+      refetchSongList()
+    },
   })
 
   return {
     ...result,
     songId,
-    editSong: (
-      song: Song,
-      options?: Parameters<typeof mutate>[1],
-    ) => mutate({
-      ...song,
-      id: songDocId,
-    }, options),
+    editSong: (song: Song, options?: Parameters<typeof mutate>[1]) => {
+      mutate({
+        ...song,
+        id: songDocId,
+      }, options)
+    },
   }
 }

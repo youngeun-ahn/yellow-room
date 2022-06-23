@@ -1,12 +1,14 @@
 import { useRoom, useSongList } from '@core/query'
 import { Add, Search } from '@mui/icons-material'
 import { Box, Fab, TextField } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
 import Header from '@component/Header'
 import SongModalProvider, { useSongModalContext } from '@component/SongModal/SongModalProvider'
 import SongModal from '@component/SongModal/SongModal'
+import useLocalStorage from 'use-local-storage'
+import { uniqSort } from '@core/util'
 
 function Room () {
   const { id: roomId = '' } = useParams()
@@ -15,14 +17,22 @@ function Room () {
 
   const { openModal } = useSongModalContext()
 
+  /* Lobby 에서의 방제 Autocomplete를 위한 localstorage 갱신 */
+  const [myRoomList, setMyRoomList] = useLocalStorage<string[]>('myRoomList', [])
+  useEffect(() => {
+    if (!room?.name?.trim()) return
+    const nextRoomList = uniqSort([...myRoomList, room.name])
+    setMyRoomList(nextRoomList)
+  }, [room?.name])
+
   const {
-    filter,
+    search,
     groupBy,
     isSuccess,
     isError,
   } = useSongList(roomId)
 
-  const hasSong = isSuccess && filter(keyword).length > 0
+  const hasSong = isSuccess && search(keyword).length > 0
 
   if (!roomId) {
     return <Navigate to="/" />
