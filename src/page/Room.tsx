@@ -6,7 +6,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
 import Header from '@component/Header'
 import SongDetailProvider, { useSongDetailContext } from '@component/SongDetail/context'
-import SongDrawer from '@component/SongDetail/SongDetail'
+import SongDetailDrawer from '@component/SongDetail/SongDetail'
 import useLocalStorage from 'use-local-storage'
 import { uniqSort } from '@core/util'
 
@@ -86,7 +86,7 @@ function RoomPage () {
   return (
     <SongDetailProvider>
       <Room />
-      <SongDrawer />
+      <SongDetailDrawer />
     </SongDetailProvider>
   )
 }

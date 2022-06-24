@@ -2,13 +2,18 @@ import { useDeleteSong, useEditSong } from '@core/query'
 import { Drawer, DialogContent } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { useLayoutEffect, useState } from 'react'
 import Header from './Header'
 import { useSongDetailContext } from './context'
 import SongForm from './SongForm'
 
 /* Song Detail Drawer */
-function SongDetail () {
-  const { song, open, closeSongDetail } = useSongDetailContext()
+interface Props {
+  onClose: () => void
+}
+function SongDetail ({ onClose }: Props) {
+  const { open, song, closeSongDetail } = useSongDetailContext()
+
   const songForm = useForm<Song>({
     mode: 'all',
     reValidateMode: 'onChange',
@@ -34,14 +39,21 @@ function SongDetail () {
 
   const { id: roomId = '' } = useParams()
   const { editSong } = useEditSong(roomId, song?.id)
-  const onSave = handleSubmit(({ title, singer, origin, key, tempo, ...form }) => {
+  const onSave = handleSubmit(form => {
+    const {
+      title, singer, origin,
+      number, key, tempo,
+      ...restForm
+    } = form
+
     editSong({
       title: title.trim(),
       singer: singer.trim(),
       origin: origin.trim(),
+      number: Number.parseInt(String(number), 10),
       key: Number.parseInt(String(key), 10),
       tempo: Number.parseInt(String(tempo), 10),
-      ...form,
+      ...restForm,
     }, {
       onSuccess: closeSongDetail,
     })
@@ -49,10 +61,6 @@ function SongDetail () {
 
   const { deleteSong } = useDeleteSong(roomId, song?.id)
   const onDelete = () => deleteSong({ onSuccess: closeSongDetail })
-
-  if (!open) {
-    return <></>
-  }
 
   return (
     <>
@@ -64,7 +72,10 @@ function SongDetail () {
       <Drawer
         open={open}
         closeAfterTransition
-        transitionDuration={300}
+        onTransitionEnd={() => {
+          if (open) return
+          onClose()
+        }}
         anchor="bottom"
       >
         <DialogContent className="h-screen !pt-[4.8rem] sm:!pt-[6.4rem] bg-yellow-50">
@@ -75,4 +86,21 @@ function SongDetail () {
   )
 }
 
-export default SongDetail
+/* NOTE: Drawer가 닫혀있을 때는 unmount하여 useForm 초기화 및 렌더링 최적화 */
+function SongDetailDrawer () {
+  const { open } = useSongDetailContext()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useLayoutEffect(() => {
+    if (!open) return
+    setIsMounted(true)
+  }, [open])
+
+  if (!open && !isMounted) {
+    return <></>
+  }
+
+  return <SongDetail onClose={() => setIsMounted(false)} />
+}
+
+export default SongDetailDrawer
