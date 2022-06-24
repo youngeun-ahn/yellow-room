@@ -1,6 +1,6 @@
 import { EditOutlined } from '@mui/icons-material'
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material'
-import { useSongModalContext } from './SongModal/SongModalProvider'
+import { useSongDetailContext } from './SongDetail/context'
 
 interface Props {
   song: Song
@@ -12,13 +12,13 @@ function SongCard ({ song }: Props) {
     BOTH: 'purple',
     NONE: 'black',
   } as const
-
   const keyColor = keyColorMap[song.gender]
+
   const titleRow = song.singer
     ? `${song.title} (${song.singer})`
     : song.title
 
-  const { openModal } = useSongModalContext()
+  const { openSongDetail } = useSongDetailContext()
 
   return (
     <Card className="w-full sm:w-[24rem]">
@@ -27,7 +27,7 @@ function SongCard ({ song }: Props) {
           disableRipple
           size="small" color="secondary"
           className="!absolute top-4 right-4 opacity-50 hover:opacity-100"
-          onClick={() => openModal(song)}
+          onClick={() => openSongDetail(song)}
         >
           <EditOutlined fontSize="small" />
         </IconButton>

@@ -41,7 +41,7 @@ const StateContext = createContext(defaultContext)
 const DispatchContext = createContext<Dispatch<Action>>(() => {})
 
 type Props = PropsWithChildren<unknown>
-function SongModalProvider ({ children }: Props) {
+function SongDetailProvider ({ children }: Props) {
   const [state, dispatch] = useReducer(reducer, defaultContext)
   return (
     <StateContext.Provider value={state}>
@@ -52,7 +52,7 @@ function SongModalProvider ({ children }: Props) {
   )
 }
 
-export const useSongModalContext = () => {
+export const useSongDetailContext = () => {
   const state = useContext(StateContext)
   const dispatch = useContext(DispatchContext)
   return {
@@ -62,10 +62,10 @@ export const useSongModalContext = () => {
     isEditable: state.mode === 'EDIT',
     isReadonly: state.mode === 'READ',
     /* Dispatches */
-    openModal (song?: Song) {
+    openSongDetail (song?: Song) {
       dispatch({ type: 'OPEN', song })
     },
-    closeModal () {
+    closeSongDetail () {
       dispatch({ type: 'CLOSE' })
     },
     setMode (mode: Mode) {
@@ -74,4 +74,4 @@ export const useSongModalContext = () => {
   }
 }
 
-export default SongModalProvider
+export default SongDetailProvider

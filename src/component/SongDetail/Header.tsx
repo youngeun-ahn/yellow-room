@@ -1,7 +1,7 @@
 import { Close, Delete, Edit, Replay, Save } from '@mui/icons-material'
 import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box } from '@mui/material'
 import { useCallback, useMemo } from 'react'
-import { useSongModalContext } from './SongModalProvider'
+import { useSongDetailContext } from './context'
 
 interface Props {
   onSave: () => void
@@ -12,8 +12,9 @@ function Header ({ onSave, onReset, onDelete }: Props) {
   const {
     open, mode,
     isNew, isEditable, isReadonly,
-    closeModal, setMode,
-  } = useSongModalContext()
+    closeSongDetail,
+    setMode,
+  } = useSongDetailContext()
 
   const title = useMemo(() => {
     if (isNew) {
@@ -42,7 +43,7 @@ function Header ({ onSave, onReset, onDelete }: Props) {
     <AppBar position="fixed" className="!z-[9999]">
       <Toolbar className="f-row-4">
         {/* 닫기 */}
-        <IconButton onClick={closeModal}>
+        <IconButton onClick={closeSongDetail}>
           <Close htmlColor="white" />
         </IconButton>
         {/* 타이틀 */}

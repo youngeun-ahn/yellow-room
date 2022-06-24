@@ -12,8 +12,8 @@ function SongGroup ({ title, songList }: Props) {
   const [open, setOpen] = useState(true)
   return (
     <Box className="f-col-2">
-      <Box className="f-row" onClick={() => setOpen(!open)}>
-        <Typography variant="subtitle2" fontWeight="bold">
+      <Box className="f-row ml-4" onClick={() => setOpen(!open)}>
+        <Typography variant="subtitle1" fontWeight="bold">
           {title || '그룹 없음'}
         </Typography>
         <KeyboardArrowDown
@@ -24,7 +24,7 @@ function SongGroup ({ title, songList }: Props) {
         />
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <Box className="f-row-8 sm:!items-stretch sm:min-h-[8rem]">
+        <Box className="f-row-start-8 sm:!items-stretch sm:min-h-[8rem]">
           {songList.map(song => (
             <SongCard key={song.id} song={song} />
           ))}

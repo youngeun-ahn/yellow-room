@@ -1,5 +1,11 @@
 declare type Gender = 'MAN' | 'WOMAN' | 'BOTH' | 'NONE'
 
+declare interface Room {
+  id: string
+  name: string
+  pwd: string
+}
+
 declare interface Song {
   id: string
   number: number

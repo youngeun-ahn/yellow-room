@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
 import Header from '@component/Header'
-import SongModalProvider, { useSongModalContext } from '@component/SongModal/SongModalProvider'
-import SongModal from '@component/SongModal/SongModal'
+import SongDetailProvider, { useSongDetailContext } from '@component/SongDetail/context'
+import SongDrawer from '@component/SongDetail/SongDetail'
 import useLocalStorage from 'use-local-storage'
 import { uniqSort } from '@core/util'
 
@@ -15,7 +15,7 @@ function Room () {
   const { room } = useRoom(roomId)
   const [keyword, setKeyword] = useState('')
 
-  const { openModal } = useSongModalContext()
+  const { openSongDetail } = useSongDetailContext()
 
   /* Lobby 에서의 방제 Autocomplete를 위한 localstorage 갱신 */
   const [myRoomList, setMyRoomList] = useLocalStorage<string[]>('myRoomList', [])
@@ -43,7 +43,7 @@ function Room () {
       <Fab
         color="primary"
         className="!fixed right-16 bottom-16"
-        onClick={() => openModal()}
+        onClick={() => openSongDetail()}
       >
         <Add fontSize="large" />
       </Fab>
@@ -61,7 +61,7 @@ function Room () {
         />
         {isSuccess && (
           hasSong ? (
-            <Box>
+            <Box className="f-col-16">
               {Object.entries(groupBy(keyword)).map(([groupName, songList]) => (
                 <SongGroup key={groupName} title={groupName} songList={songList} />
               ))}
@@ -84,10 +84,10 @@ function Room () {
 
 function RoomPage () {
   return (
-    <SongModalProvider>
+    <SongDetailProvider>
       <Room />
-      <SongModal />
-    </SongModalProvider>
+      <SongDrawer />
+    </SongDetailProvider>
   )
 }
 

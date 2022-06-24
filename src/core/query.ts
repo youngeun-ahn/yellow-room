@@ -11,12 +11,6 @@ import { groupBy } from 'lodash'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
 
-export interface Room {
-  id: string
-  name: string
-  pwd: string
-}
-
 const ROOT = 'Room'
 const SONG_LIST = 'Song'
 const roomConverter = getDefaultConverter<Room>()
@@ -133,7 +127,7 @@ export const useSongList = (roomId: string) => {
 export const useEditSong = (roomId: string, songId?: string) => {
   const songDocId = songId ?? nanoid(5)
   const songDocRef = getSongDocRef(roomId, songDocId)
-  const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef)
+  const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef, { merge: true })
 
   return {
     ...result,
@@ -150,7 +144,14 @@ export const useDeleteSong = (roomId: string, songId = EMPTY_SONG_ID) => {
   // NOTE: 신규 생성시에도 hook 규칙 때문에 호출되어야 해서 songId가 없을 수 있는데
   // 이 경우, firestore 문서를 가져올때 문제가 발생하여 더미 문서 ID로 처리.
   const songDocRef = getSongDocRef(roomId, songId)
-  const { mutate, ...result } = useFirestoreDocumentDeletion(songDocRef)
+  const {
+    refetch: refetchSongList,
+  } = useSongList(roomId)
+  const { mutate, ...result } = useFirestoreDocumentDeletion(songDocRef, {
+    onSuccess () {
+      refetchSongList()
+    },
+  })
 
   return {
     ...result,
