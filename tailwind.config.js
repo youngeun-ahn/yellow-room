@@ -38,7 +38,7 @@ const flexUtil = plugin(({ addUtilities, matchUtilities, theme }) => {
     'f-col' (gap) {
       return {
         ...flex['f'](gap),
-        flexFlow: 'column wrap',
+        flexFlow: 'column nowrap',
         alignItems: 'stretch',
       }
     },
