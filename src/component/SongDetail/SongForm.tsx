@@ -234,7 +234,7 @@ function SongForm ({ songForm }: Props) {
         variant="outlined" fullWidth
         multiline rows={4}
         InputProps={{
-          inputProps: { maxLength: 1024 },
+          inputProps: { maxLength: 10240 },
         }}
         {...register('memo')}
         disabled={isReadonly}
@@ -244,7 +244,7 @@ function SongForm ({ songForm }: Props) {
         label="가사"
         variant="outlined" fullWidth
         multiline rows={4}
-        inputProps={{ maxLength: 1024 }}
+        inputProps={{ maxLength: 10240 }}
         {...register('lyric')}
         disabled={isReadonly}
       />
