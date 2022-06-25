@@ -1,3 +1,4 @@
+import produce from 'immer'
 import {
   createContext, useContext, useReducer,
   Dispatch, Reducer, PropsWithChildren,
@@ -15,27 +16,23 @@ type Action =
   | { type: 'CLOSE' }
   | { type: 'SET_MODE', mode: Mode }
 
-const reducer: Reducer<Context, Action> = (state, action) => {
+const reducer: Reducer<Context, Action> = (state, action) => produce(state, baseState => {
   switch (action.type) {
     case 'OPEN':
-      return {
-        open: true,
-        song: action.song,
-        mode: action.song ? 'READ' : 'NEW',
-      }
+      baseState.open = true
+      baseState.song = action.song
+      baseState.mode = action.song ? 'READ' : 'NEW'
+      break
     case 'CLOSE':
-      return {
-        open: false,
-      }
+      baseState.open = false
+      break
     case 'SET_MODE':
-      return {
-        ...state,
-        mode: action.mode,
-      }
+      baseState.mode = action.mode
+      break
     default:
   }
-  return state
-}
+  return baseState
+})
 
 const StateContext = createContext(defaultContext)
 const DispatchContext = createContext<Dispatch<Action>>(() => {})

@@ -1,5 +1,6 @@
 import { EditOutlined } from '@mui/icons-material'
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material'
+import classNames from 'classnames'
 import { useSongDetailContext } from './SongDetail/context'
 
 interface Props {
@@ -14,14 +15,21 @@ function SongCard ({ song }: Props) {
   } as const
   const keyColor = keyColorMap[song.gender]
 
-  const titleRow = song.singer
+  const titleLabel = song.singer
     ? `${song.title} (${song.singer})`
     : song.title
 
   const { openSongDetail } = useSongDetailContext()
 
   return (
-    <Card className="w-full sm:w-[24rem]">
+    <Card
+      className={classNames(
+        'w-full sm:w-[24rem]',
+        {
+          'bg-slate-300': song.isBlacklist,
+        },
+      )}
+    >
       <CardContent className="relative !p-8 sm:!p-12">
         <IconButton
           disableRipple
@@ -45,9 +53,7 @@ function SongCard ({ song }: Props) {
             )}
           </Box>
           {/* 제목 (가수) */}
-          <Typography>
-            {titleRow}
-          </Typography>
+          <Box>{titleLabel}</Box>
           {/* 태그 목록 */}
           <Box className="f-row-start-2">
             {song.tagList.map(tag => (

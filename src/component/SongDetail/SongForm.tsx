@@ -191,7 +191,7 @@ function SongForm ({ songForm }: Props) {
                 <Checkbox
                   disableRipple
                   className="!p-2 !mr-2"
-                  value={field.value}
+                  checked={field.value}
                   onChange={(_, checked) => setValue('isBlacklist', checked)}
                 />
               )}

@@ -2,7 +2,8 @@ import { useDeleteSong, useEditSong } from '@core/query'
 import { Drawer, DialogContent } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { useDeepCompareEffect } from 'use-deep-compare'
 import Header from './Header'
 import { useSongDetailContext } from './context'
 import SongForm from './SongForm'
@@ -17,8 +18,12 @@ function SongDetail ({ onClose }: Props) {
   const songForm = useForm<Song>({
     mode: 'all',
     reValidateMode: 'onChange',
-    defaultValues: {
-      // number: 0,
+  })
+
+  useDeepCompareEffect(() => {
+    if (!open) return
+    songForm.reset({
+      // number: 0, // NOTE: 생성시 number 필드는 일단 빈 필드로 둬야함.
       key: 0,
       tempo: 0,
       gender: 'NONE',
@@ -32,8 +37,8 @@ function SongDetail ({ onClose }: Props) {
       lyric: '',
       youtube: '',
       ...song,
-    },
-  })
+    })
+  }, [open, song])
 
   const { handleSubmit, reset } = songForm
 
