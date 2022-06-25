@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { useState } from 'react'
-import SettingDrawer from './SettingDrawer'
+import SettingDrawer from './Setting/SettingDrawer'
 
 interface Props {
   title?: string
