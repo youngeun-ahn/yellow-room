@@ -1,7 +1,7 @@
 import {
   Box, Drawer, Button, IconButton,
   FormControlLabel, FormControl, InputLabel,
-  Checkbox, Select, MenuItem,
+  Checkbox, Select, MenuItem, Typography,
 } from '@mui/material'
 import { Settings } from '@mui/icons-material'
 import useLocalStorage from 'use-local-storage'
@@ -133,6 +133,11 @@ function SettingDrawer ({ open, toggle }: Props) {
       >
         <SettingPanel />
       </Drawer>
+      {open && (
+        <Typography className="fixed right-8 bottom-8">
+          Copyright 2022. Youngeun.Ahn all rights reserved
+        </Typography>
+      )}
     </>
   )
 }
