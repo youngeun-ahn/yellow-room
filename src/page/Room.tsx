@@ -61,7 +61,7 @@ function Room () {
         />
         {isSuccess && (
           hasSong ? (
-            <Box className="f-col-16 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8">
+            <Box className="f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8">
               {Object.entries(groupBy(keyword)).map(([groupName, songList]) => (
                 <SongGroup key={groupName} title={groupName} songList={songList} />
               ))}

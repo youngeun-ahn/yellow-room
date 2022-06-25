@@ -13,7 +13,7 @@ function SongGroup ({ title, songList }: Props) {
   return (
     <Box className="f-col-2">
       <Box
-        className="f-row p-4 -mr-4 -mb-4 z-10 sticky top-0 bg-yellow-300"
+        className="f-row px-8 py-4 sm:px-12 sm:py-8 -mb-4 z-10 sticky top-0 bg-yellow-200 cursor-pointer"
         onClick={() => setOpen(!open)}
       >
         <Typography variant="subtitle1" fontWeight="bold">
@@ -27,7 +27,7 @@ function SongGroup ({ title, songList }: Props) {
         />
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <Box className="f-row-start-8 pt-4 sm:!items-stretch sm:min-h-[8rem]">
+        <Box className="f-row-start-8 pt-8 sm:!items-stretch sm:min-h-[8rem]">
           {songList.map(song => (
             <SongCard key={song.id} song={song} />
           ))}

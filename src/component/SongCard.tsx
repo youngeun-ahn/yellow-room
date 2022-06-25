@@ -25,9 +25,7 @@ function SongCard ({ song }: Props) {
     <Card
       className={classNames(
         'w-full sm:w-[24rem]',
-        {
-          'bg-slate-300': song.isBlacklist,
-        },
+        { '!bg-slate-300 !line-through': song.isBlacklist },
       )}
     >
       <CardContent className="relative !p-8 sm:!p-12">
