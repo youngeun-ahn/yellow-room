@@ -1,14 +1,10 @@
 import { Box, IconButton, Drawer, Typography, Divider, Button } from '@mui/material'
 import { Settings } from '@mui/icons-material'
 
-// @ts-ignore
-let deferredPrompt
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault()
-  deferredPrompt = e
-})
+import { usePWAInstall } from 'react-use-pwa-install'
 
 function SettingPanel () {
+  const install = usePWAInstall()
   return (
     <Box className="f-col-8 w-[32rem] max-w-full h-full px-12 py-[6.4rem] bg-yellow-50">
       <Typography variant="h6" className="f-row-start-4">
@@ -16,12 +12,11 @@ function SettingPanel () {
         Settings
       </Typography>
       <Divider color="black" />
-      {/* @ts-ignore */}
-      {JSON.stringify(deferredPrompt)}
-      {/* @ts-ignore */}
-      <Button onClick={() => deferredPrompt?.prompt()}>
-        Install4
-      </Button>
+      {install && (
+        <Button onClick={install}>
+          App으로 설치 (PWA)
+        </Button>
+      )}
     </Box>
   )
 }
