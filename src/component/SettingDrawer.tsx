@@ -1,5 +1,12 @@
-import { Box, IconButton, Drawer, Typography, Divider } from '@mui/material'
+import { Box, IconButton, Drawer, Typography, Divider, Button } from '@mui/material'
 import { Settings } from '@mui/icons-material'
+
+// @ts-ignore
+let deferredPrompt
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault()
+  deferredPrompt = e
+})
 
 function SettingPanel () {
   return (
@@ -9,6 +16,12 @@ function SettingPanel () {
         Settings
       </Typography>
       <Divider color="black" />
+      {/* @ts-ignore */}
+      {JSON.stringify(deferredPrompt)}
+      {/* @ts-ignore */}
+      <Button onClick={() => deferredPrompt?.prompt()}>
+        Install4
+      </Button>
     </Box>
   )
 }
