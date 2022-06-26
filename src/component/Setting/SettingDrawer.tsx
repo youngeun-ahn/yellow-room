@@ -5,9 +5,10 @@ import {
 } from '@mui/material'
 import { Check, Settings } from '@mui/icons-material'
 import useLocalStorage from 'use-local-storage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useState } from 'react'
+import { useDeleteRoom } from '@core/query'
 import PWAInstallButton from './PWAInstallButton'
 
 function SettingPanel () {
@@ -32,6 +33,8 @@ function SettingPanel () {
   }
 
   const [copiedLink, setCopiedLink] = useState('')
+  const { id: roomId = '' } = useParams()
+  const { deleteRoom } = useDeleteRoom(roomId)
 
   return (
     <Box className="f-col-8 w-[32rem] max-w-full h-full px-12 pt-[4.8rem] sm:pt-[5.4rem] pb-24 bg-yellow-50">
@@ -93,7 +96,7 @@ function SettingPanel () {
       <Box className="f-col-8">
         <Button
           variant="contained" size="large"
-          className="!bg-white !text-blue-600 !shadow-sm"
+          className="!bg-green-500 !shadow-sm"
           onClick={() => navigate('/', { state: { logout: true } })}
         >
           로비로 이동
@@ -116,7 +119,7 @@ function SettingPanel () {
           variant="contained" size="large"
           color="error"
           className="!shadow-sm"
-          onClick={() => {}}
+          onClick={() => deleteRoom()}
         >
           방 청소하기
         </Button>

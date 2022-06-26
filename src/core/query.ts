@@ -8,6 +8,7 @@ import {
 import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
 import { groupBy } from 'lodash'
+import { useNavigate } from 'react-router-dom'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
 
@@ -76,6 +77,25 @@ export const useRoom = (roomId: string) => {
     ...result
   } = useFirestoreDocumentData([ROOT, roomId], roomDocRef)
   return { room, ...result }
+}
+
+/** Room 삭제 */
+export const useDeleteRoom = (roomId: string) => {
+  const navigate = useNavigate()
+
+  const roomDocRef = getRoomDocRef(roomId)
+  const { mutate, ...result } = useFirestoreDocumentDeletion(roomDocRef, {
+    onSuccess () {
+      navigate('/', { replace: true, state: { logout: true } })
+    },
+  })
+
+  return {
+    ...result,
+    deleteRoom: (options?: Parameters<typeof mutate>[1]) => {
+      mutate(undefined, options)
+    },
+  }
 }
 
 /** Song 목록 조회 */
