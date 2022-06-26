@@ -2,7 +2,7 @@ import { useRoom, useSongList } from '@core/query'
 import { Add, Search } from '@mui/icons-material'
 import { Box, Fab, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
 import Header from '@component/Header'
 import SongDetailProvider, { useSongDetailContext } from '@component/SongDetail/context'
@@ -12,12 +12,24 @@ import { uniqSort } from '@core/util'
 
 function Room () {
   const { id: roomId = '' } = useParams()
-  const { room } = useRoom(roomId)
+  const { room, isSuccess: isRoomFetched } = useRoom(roomId)
   const [keyword, setKeyword] = useState('')
-
   const { openSongDetail } = useSongDetailContext()
+  const navigate = useNavigate()
 
-  /* Lobby 에서의 방제 Autocomplete를 위한 localstorage 갱신 */
+  const [, setLastEnteredRoom] = useLocalStorage<string>('lastEnteredRoom', '')
+
+  /* 없는 방에 입장 */
+  useEffect(() => {
+    if (!isRoomFetched) return
+    if (room) {
+      setLastEnteredRoom(room.id)
+      return
+    }
+    navigate('/', { state: { logout: true } })
+  }, [isRoomFetched, Boolean(room)])
+
+  /* Lobby 에서 방 이름 자동 완성을 위해 입장한 방 이름 목록 기억 */
   const [myRoomList, setMyRoomList] = useLocalStorage<string[]>('myRoomList', [])
   useEffect(() => {
     if (!room?.name?.trim()) return

@@ -3,9 +3,9 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { Info, InfoOutlined } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
-import { useCreateRoom, useFindRoom } from '@core/query'
+import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
 
 interface RoomForm {
@@ -13,7 +13,7 @@ interface RoomForm {
   roomPwd: string
 }
 
-function Login () {
+function Lobby () {
   /* Room List Autocomplete */
   const [roomList] = useLocalStorage<string[]>('myRoomList', [])
 
@@ -54,6 +54,20 @@ function Login () {
     // 있는 방이면 바로 redirect
     navigate(`/room/${room.id}`, { replace: true })
   })
+
+  /* Auto Login to last entered room */
+  const [lastEnteredRoom] = useLocalStorage('lastEnteredRoom', '')
+  const { room: lastRoom, isLoading } = useRoom(lastEnteredRoom)
+  const { state } = useLocation()
+  const locState = state as { logout: boolean }
+  if (lastEnteredRoom && isLoading) {
+    return <></>
+  }
+  if (!locState?.logout && lastRoom) {
+    return (
+      <Navigate to={`/room/${lastEnteredRoom}`} replace />
+    )
+  }
 
   return (
     <>
@@ -179,4 +193,4 @@ function Login () {
   )
 }
 
-export default Login
+export default Lobby

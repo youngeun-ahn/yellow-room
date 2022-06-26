@@ -5,6 +5,7 @@ import {
 } from '@mui/material'
 import { Settings } from '@mui/icons-material'
 import useLocalStorage from 'use-local-storage'
+import { useNavigate } from 'react-router-dom'
 import PWAInstallButton from './PWAInstallButton'
 
 function SettingPanel () {
@@ -13,6 +14,8 @@ function SettingPanel () {
     groupBy: 'ORIGIN',
     orderBy: 'GROUP',
   })
+
+  const navigate = useNavigate()
 
   const groupByLabel = {
     ORIGIN: '원작으로 그룹핑',
@@ -87,7 +90,7 @@ function SettingPanel () {
         <Button
           variant="contained" size="large"
           className="!bg-white !text-blue-600 !shadow-sm"
-          onClick={() => {}}
+          onClick={() => navigate('/', { state: { logout: true } })}
         >
           로비로 이동
         </Button>
