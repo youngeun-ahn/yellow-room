@@ -3,9 +3,11 @@ import {
   FormControlLabel, FormControl, InputLabel,
   Checkbox, Select, MenuItem, Typography,
 } from '@mui/material'
-import { Settings } from '@mui/icons-material'
+import { Check, Settings } from '@mui/icons-material'
 import useLocalStorage from 'use-local-storage'
 import { useNavigate } from 'react-router-dom'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { useState } from 'react'
 import PWAInstallButton from './PWAInstallButton'
 
 function SettingPanel () {
@@ -28,6 +30,8 @@ function SettingPanel () {
     RATING: '선호도 순으로 정렬',
     RANDOM: '무작위 순서로 정렬',
   }
+
+  const [copiedLink, setCopiedLink] = useState('')
 
   return (
     <Box className="f-col-8 w-[32rem] max-w-full h-full px-12 pt-[4.8rem] sm:pt-[5.4rem] pb-24 bg-yellow-50">
@@ -94,13 +98,20 @@ function SettingPanel () {
         >
           로비로 이동
         </Button>
-        <Button
-          variant="contained" size="large"
-          className="!bg-yellow-400 !text-black !shadow-sm"
-          onClick={() => {}}
+        <CopyToClipboard
+          text={location.href}
+          onCopy={setCopiedLink}
         >
-          이 방의 링크 복사
-        </Button>
+          <Button
+            variant="contained" size="large"
+            className="!bg-yellow-400 !text-black !shadow-sm"
+          >
+            이 방의 링크 복사
+            {copiedLink && (
+              <Check color="success" fontSize="small" className="ml-4" />
+            )}
+          </Button>
+        </CopyToClipboard>
         <Button
           variant="contained" size="large"
           color="error"
