@@ -1,9 +1,9 @@
 import {
   Box, Drawer, Button, IconButton,
   FormControlLabel, FormControl, InputLabel,
-  Checkbox, Select, MenuItem, Typography,
+  Checkbox, Select, MenuItem, Typography, FormHelperText,
 } from '@mui/material'
-import { Check, Settings } from '@mui/icons-material'
+import { Check, Info, Settings } from '@mui/icons-material'
 import useLocalStorage from 'use-local-storage'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -15,13 +15,14 @@ function SettingPanel () {
   const [setting, setSetting] = useLocalStorage<Setting>('setting', {
     hideBlacklist: false,
     groupBy: 'ORIGIN',
-    orderBy: 'GROUP',
+    orderBy: 'TITLE',
   })
 
   const navigate = useNavigate()
 
   const groupByLabel = {
     ORIGIN: '원작으로 그룹핑',
+    SINGER: '가수 이름으로 그룹핑',
     NONE: '그룹핑 안함',
   }
 
@@ -35,6 +36,8 @@ function SettingPanel () {
   const [copiedLink, setCopiedLink] = useState('')
   const { id: roomId = '' } = useParams()
   const { deleteRoom } = useDeleteRoom(roomId)
+
+  const isShuffle = setting.orderBy === 'RANDOM'
 
   return (
     <Box className="f-col-8 w-[32rem] max-w-full h-full px-12 pt-[4.8rem] sm:pt-[5.4rem] pb-24 bg-yellow-50">
@@ -56,7 +59,10 @@ function SettingPanel () {
           )}
         />
         {/* Group By */}
-        <FormControl variant="outlined">
+        <FormControl
+          variant="outlined"
+          disabled={isShuffle}
+        >
           <InputLabel className="bg-yellow-50 !pl-2 !pr-4">
             그룹핑
           </InputLabel>
@@ -73,7 +79,7 @@ function SettingPanel () {
             ))}
           </Select>
         </FormControl>
-        {/* Group By */}
+        {/* Order By */}
         <FormControl variant="outlined">
           <InputLabel className="bg-yellow-50 !pl-2 !pr-4">
             정렬 기준
@@ -90,6 +96,12 @@ function SettingPanel () {
               <MenuItem key={value} value={value}>{label}</MenuItem>
             ))}
           </Select>
+          {isShuffle && (
+            <FormHelperText>
+              <Info fontSize="small" />
+              정렬 기준이 무작위 순서인 경우 그룹핑할 수 없습니다.
+            </FormHelperText>
+          )}
         </FormControl>
       </Box>
       {/* Actions */}

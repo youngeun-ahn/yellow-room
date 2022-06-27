@@ -4,12 +4,28 @@ import classNames from 'classnames'
 import { useState } from 'react'
 import SongCard from './SongCard'
 
+interface SongListProps {
+  songList: Song[]
+}
+function SongList ({ songList }: SongListProps) {
+  return (
+    <Box className="f-row-start-8 pt-8 sm:!items-stretch sm:min-h-[8rem]">
+      {songList.map(song => (
+        <SongCard key={song.id} song={song} />
+      ))}
+    </Box>
+  )
+}
+
 interface Props {
   title: string
   songList: Song[]
 }
 function SongGroup ({ title, songList }: Props) {
   const [open, setOpen] = useState(true)
+  if (title === 'undefined') {
+    return <SongList songList={songList} />
+  }
   return (
     <Box className="f-col-2">
       <Box
@@ -27,11 +43,7 @@ function SongGroup ({ title, songList }: Props) {
         />
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <Box className="f-row-start-8 pt-8 sm:!items-stretch sm:min-h-[8rem]">
-          {songList.map(song => (
-            <SongCard key={song.id} song={song} />
-          ))}
-        </Box>
+        <SongList songList={songList} />
       </Collapse>
     </Box>
   )

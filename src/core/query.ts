@@ -1,4 +1,4 @@
-import { collection, query, doc, where, orderBy } from 'firebase/firestore'
+import { collection, query, doc, where, orderBy, QueryConstraint } from 'firebase/firestore'
 import {
   useFirestoreQueryData,
   useFirestoreDocumentMutation,
@@ -7,8 +7,9 @@ import {
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
-import { groupBy } from 'lodash'
+import { groupBy, shuffle } from 'lodash'
 import { useNavigate } from 'react-router-dom'
+import useLocalStorage from 'use-local-storage'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
 
@@ -17,17 +18,20 @@ const SONG_LIST = 'Song'
 const roomConverter = getDefaultConverter<Room>()
 const songConverter = getDefaultConverter<Song>()
 
+const EMPTY_ROOM_ID = 'EMPTY_ROOM_ID'
+const EMPTY_SONG_ID = 'EMPTY_SONG_ID'
 const getRoomCollectionRef = () => (
   collection(firestore, ROOT).withConverter(roomConverter)
 )
 const getRoomDocRef = (roomId: string) => (
-  doc(firestore, ROOT, roomId).withConverter(roomConverter)
+  doc(firestore, ROOT, roomId || EMPTY_ROOM_ID).withConverter(roomConverter)
 )
 const getSongCollectionRef = (roomId: string) => (
-  collection(firestore, ROOT, roomId, SONG_LIST).withConverter(songConverter)
+  collection(firestore, ROOT, roomId || EMPTY_ROOM_ID, SONG_LIST).withConverter(songConverter)
 )
 const getSongDocRef = (roomId: string, songId: string) => (
-  doc(firestore, ROOT, roomId, SONG_LIST, songId).withConverter(songConverter)
+  doc(firestore, ROOT, roomId || EMPTY_ROOM_ID, SONG_LIST, songId || EMPTY_SONG_ID)
+    .withConverter(songConverter)
 )
 
 /** Room 생성 */
@@ -69,15 +73,13 @@ export const useFindRoom = (roomName = '', roomPwd = '') => {
   }
 }
 
-const EMPTY_ROOM_ID = 'EMPTY_ROOM_ID'
 /** Room 상세 정보 */
 export const useRoom = (roomId: string) => {
-  const id = roomId || EMPTY_ROOM_ID
-  const roomDocRef = getRoomDocRef(id)
+  const roomDocRef = getRoomDocRef(roomId)
   const {
     data: room,
     ...result
-  } = useFirestoreDocumentData([ROOT, id], roomDocRef)
+  } = useFirestoreDocumentData([ROOT, roomId], roomDocRef)
   return { room, ...result }
 }
 
@@ -103,26 +105,61 @@ export const useDeleteRoom = (roomId: string = EMPTY_ROOM_ID) => {
 /** Song 목록 조회 */
 export const useSongList = (roomId: string) => {
   const songCollectionRef = getSongCollectionRef(roomId)
+  const [setting] = useLocalStorage<Setting>('setting', {
+    hideBlacklist: false,
+    groupBy: 'ORIGIN',
+    orderBy: 'TITLE',
+  }, { syncData: true })
+
+  const constraints: QueryConstraint[] = []
+  if (setting.hideBlacklist) {
+    constraints.push(where('isBlacklist', '==', false))
+  }
+
+  let groupField = ''
+  if (setting.orderBy !== 'RANDOM') {
+    switch (setting.groupBy) {
+      case 'NONE':
+        break
+      case 'ORIGIN':
+        groupField = 'origin'
+        break
+      case 'SINGER':
+        groupField = 'singer'
+        break
+      default:
+    }
+
+    if (groupField) {
+      constraints.push(orderBy(groupField))
+    }
+
+    if (setting.orderBy === 'TITLE') {
+      constraints.push(orderBy('title', 'asc'))
+    } else if (setting.orderBy === 'RATING') {
+      constraints.push(orderBy('rating', 'desc'))
+    }
+  }
+
   const ref = query(
     songCollectionRef,
-    orderBy('origin'),
-    orderBy('title'),
-    orderBy('rating'),
+    ...constraints,
   )
 
   const {
     data: songList = [],
     ...result
   } = useFirestoreQueryData(
-    [ROOT, roomId, SONG_LIST],
+    [ROOT, roomId, SONG_LIST, setting],
     ref,
     { subscribe: true },
     { enabled: Boolean(roomId) },
   )
 
+  const isShuffle = setting.orderBy === 'RANDOM'
   const search = useDeepCompareCallback((keyword = '') => {
     if (!keyword) return songList
-    return songList.filter(song => (
+    const filtered = songList.filter(song => (
       [
         () => isKeywordIncludes(song.title, keyword),
         () => isKeywordIncludes(song.singer, keyword),
@@ -131,15 +168,18 @@ export const useSongList = (roomId: string) => {
         () => song.tagList.some(tag => isKeywordIncludes(tag, keyword)),
       ].some(lazyExp => lazyExp())
     ))
-  }, [songList])
 
-  const groupByOrigin = useDeepCompareCallback((keyword?: string) => (
-    groupBy(search(keyword), 'origin')
-  ), [songList])
+    /* OrderBy가 Random이면 Shuffle */
+    return isShuffle ? shuffle(filtered) : filtered
+  }, [songList, isShuffle])
+
+  const groupByField = useDeepCompareCallback((keyword?: string) => (
+    groupBy(search(keyword), groupField)
+  ), [songList, groupField])
 
   return {
     search,
-    groupBy: groupByOrigin,
+    groupBy: groupByField,
     songList,
     ...result,
   }
@@ -160,7 +200,6 @@ export const useEditSong = (roomId: string, songId?: string) => {
   }
 }
 
-const EMPTY_SONG_ID = 'EMPTY_SONG_ID'
 /** Song 삭제 */
 export const useDeleteSong = (roomId: string, songId = EMPTY_SONG_ID) => {
   // NOTE: 신규 생성시에도 hook 규칙 때문에 호출되어야 해서 songId가 없을 수 있는데

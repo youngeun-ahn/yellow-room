@@ -33,3 +33,9 @@ export const hash = (str: string) => {
   if (!str?.trim()) return ''
   return sha1(str)
 }
+
+export const defaultSetting: Setting = {
+  hideBlacklist: false,
+  groupBy: 'ORIGIN',
+  orderBy: 'TITLE',
+}

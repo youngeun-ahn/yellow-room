@@ -25,9 +25,9 @@ declare interface Song {
 
 declare type Mode = 'NEW' | 'EDIT' | 'READ'
 
-/** NOTE: 우선순위: GROUP > TITLE > RATING */
-declare type GroupBy = 'NONE' | 'ORIGIN' // | 'SINGER'
-declare type OrderBy = 'RANDOM' | 'RATING' | 'GROUP' | 'TITLE'
+/** NOTE: 우선순위: 무조건 GroupBy로 먼저 Sorting */
+declare type GroupBy = 'NONE' | 'ORIGIN' | 'SINGER'
+declare type OrderBy = 'TITLE' | 'RATING' | 'RANDOM'
 declare interface Setting {
   hideBlacklist: boolean
   orderBy: OrderBy
