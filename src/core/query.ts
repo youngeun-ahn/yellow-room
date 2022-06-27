@@ -69,18 +69,20 @@ export const useFindRoom = (roomName = '', roomPwd = '') => {
   }
 }
 
+const EMPTY_ROOM_ID = 'EMPTY_ROOM_ID'
 /** Room 상세 정보 */
 export const useRoom = (roomId: string) => {
-  const roomDocRef = getRoomDocRef(roomId)
+  const id = roomId || EMPTY_ROOM_ID
+  const roomDocRef = getRoomDocRef(id)
   const {
     data: room,
     ...result
-  } = useFirestoreDocumentData([ROOT, roomId], roomDocRef)
+  } = useFirestoreDocumentData([ROOT, id], roomDocRef)
   return { room, ...result }
 }
 
 /** Room 삭제 */
-export const useDeleteRoom = (roomId: string) => {
+export const useDeleteRoom = (roomId: string = EMPTY_ROOM_ID) => {
   const navigate = useNavigate()
 
   const roomDocRef = getRoomDocRef(roomId)
