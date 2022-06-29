@@ -4,19 +4,20 @@ import {
   Checkbox, Select, MenuItem, Typography, FormHelperText,
 } from '@mui/material'
 import { Check, Info, Settings } from '@mui/icons-material'
-import useLocalStorage from 'use-local-storage'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useState } from 'react'
 import { useDeleteRoom } from '@core/query'
+import { useSettingSlice } from '@core/store/settingSlice'
 import PWAInstallButton from './PWAInstallButton'
 
 function SettingPanel () {
-  const [setting, setSetting] = useLocalStorage<Setting>('setting', {
-    hideBlacklist: false,
-    groupBy: 'ORIGIN',
-    orderBy: 'TITLE',
-  })
+  const {
+    setting,
+    toggleHideBlacklist,
+    setGroupBy,
+    setOrderBy,
+  } = useSettingSlice()
 
   const navigate = useNavigate()
 
@@ -49,12 +50,7 @@ function SettingPanel () {
           control={(
             <Checkbox
               checked={setting.hideBlacklist}
-              onChange={(_, checked) => {
-                setSetting({
-                  ...setting,
-                  hideBlacklist: checked,
-                })
-              }}
+              onChange={(_, checked) => toggleHideBlacklist(checked)}
             />
           )}
         />
@@ -69,10 +65,7 @@ function SettingPanel () {
           <Select
             value={setting.groupBy}
             renderValue={groupBy => groupByLabel[groupBy]}
-            onChange={e => setSetting({
-              ...setting,
-              groupBy: e.target.value as GroupBy,
-            })}
+            onChange={e => setGroupBy(e.target.value as GroupBy)}
           >
             {Object.entries(groupByLabel).map(([value, label]) => (
               <MenuItem key={value} value={value}>{label}</MenuItem>
@@ -87,10 +80,7 @@ function SettingPanel () {
           <Select
             value={setting.orderBy}
             renderValue={orderBy => orderByLabel[orderBy]}
-            onChange={e => setSetting({
-              ...setting,
-              orderBy: e.target.value as OrderBy,
-            })}
+            onChange={e => setOrderBy(e.target.value as OrderBy)}
           >
             {Object.entries(orderByLabel).map(([value, label]) => (
               <MenuItem key={value} value={value}>{label}</MenuItem>

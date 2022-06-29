@@ -9,9 +9,9 @@ import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
 import { groupBy, shuffle } from 'lodash'
 import { useNavigate } from 'react-router-dom'
-import useLocalStorage from 'use-local-storage'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
+import { useSettingSlice } from './store/settingSlice'
 
 const ROOT = 'Room'
 const SONG_LIST = 'Song'
@@ -105,11 +105,7 @@ export const useDeleteRoom = (roomId: string = EMPTY_ROOM_ID) => {
 /** Song 목록 조회 */
 export const useSongList = (roomId: string) => {
   const songCollectionRef = getSongCollectionRef(roomId)
-  const [setting] = useLocalStorage<Setting>('setting', {
-    hideBlacklist: false,
-    groupBy: 'ORIGIN',
-    orderBy: 'TITLE',
-  }, { syncData: true })
+  const { setting } = useSettingSlice()
 
   const constraints: QueryConstraint[] = []
   if (setting.hideBlacklist) {
