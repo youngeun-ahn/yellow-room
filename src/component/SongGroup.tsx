@@ -1,17 +1,33 @@
+import { useSettingSlice } from '@core/store/settingSlice'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { Box, Collapse, Typography } from '@mui/material'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import SongCard from './SongCard'
 
 interface SongListProps {
   songList: Song[]
 }
 function SongList ({ songList }: SongListProps) {
+  const { setting } = useSettingSlice()
+  const isRandomOrder = setting.orderBy === 'RANDOM'
+
+  const orders = useMemo(
+    () => (
+      isRandomOrder
+        ? songList.map(() => Math.round(Math.random() * songList.length) + 1)
+        : []
+    ),
+    [isRandomOrder, songList.length],
+  )
+
   return (
     <Box className="f-row-start-8 pt-8 sm:!items-stretch sm:min-h-[8rem]">
-      {songList.map(song => (
-        <SongCard key={song.id} song={song} />
+      {songList.map((song, idx) => (
+        <SongCard
+          key={song.id} song={song}
+          sx={{ order: orders[idx] }}
+        />
       ))}
     </Box>
   )
@@ -23,9 +39,11 @@ interface Props {
 }
 function SongGroup ({ title, songList }: Props) {
   const [open, setOpen] = useState(true)
+
   if (title === 'undefined') {
     return <SongList songList={songList} />
   }
+
   return (
     <Box className="f-col-2">
       <Box

@@ -7,7 +7,7 @@ import {
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
-import { groupBy, shuffle } from 'lodash'
+import { groupBy } from 'lodash'
 import { useNavigate } from 'react-router-dom'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
@@ -152,10 +152,9 @@ export const useSongList = (roomId: string) => {
     { enabled: Boolean(roomId) },
   )
 
-  const isShuffle = setting.orderBy === 'RANDOM'
   const search = useDeepCompareCallback((keyword = '') => {
     if (!keyword) return songList
-    const filtered = songList.filter(song => (
+    return songList.filter(song => (
       [
         () => isKeywordIncludes(song.title, keyword),
         () => isKeywordIncludes(song.singer, keyword),
@@ -164,10 +163,7 @@ export const useSongList = (roomId: string) => {
         () => song.tagList.some(tag => isKeywordIncludes(tag, keyword)),
       ].some(lazyExp => lazyExp())
     ))
-
-    /* OrderBy가 Random이면 Shuffle */
-    return isShuffle ? shuffle(filtered) : filtered
-  }, [songList, isShuffle])
+  }, [songList])
 
   const groupByField = useDeepCompareCallback((keyword?: string) => (
     groupBy(search(keyword), groupField)

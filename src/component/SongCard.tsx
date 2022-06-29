@@ -1,12 +1,12 @@
 import { EditOutlined } from '@mui/icons-material'
-import { Box, Card, CardContent, IconButton, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardProps, IconButton, Typography } from '@mui/material'
 import classNames from 'classnames'
 import { useSongDetailContext } from './SongDetail/context'
 
-interface Props {
+interface Props extends CardProps {
   song: Song
 }
-function SongCard ({ song }: Props) {
+function SongCard ({ song, className, ...cardProps }: Props) {
   const keyColorMap = {
     MAN: 'blue',
     WOMAN: 'pink',
@@ -26,7 +26,9 @@ function SongCard ({ song }: Props) {
       className={classNames(
         'w-full sm:w-[24rem]',
         { '!bg-slate-300 !line-through': song.isBlacklist },
+        className,
       )}
+      {...cardProps}
     >
       <CardContent className="relative !p-8 sm:!p-12">
         <IconButton
