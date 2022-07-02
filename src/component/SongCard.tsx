@@ -45,7 +45,7 @@ function SongCard ({ song, className, ...cardProps }: Props) {
             <Typography fontWeight="bold">
               {song.number}
             </Typography>
-            {song.key && (
+            {song.key !== 0 && (
               <Typography color={keyColor}>
                 {song.key > 0 && '+'}
                 {song.key}
