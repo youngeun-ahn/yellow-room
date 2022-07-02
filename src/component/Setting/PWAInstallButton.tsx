@@ -1,16 +1,15 @@
-import { Button, ButtonProps } from '@mui/material'
+import { Button } from '@mui/material'
 import { usePWAInstall } from 'react-use-pwa-install'
 
-function PWAInstallButton ({ onClick, ...props }: ButtonProps) {
+function PWAInstallButton () {
   const install = usePWAInstall()
-
-  const onClickInstall: ButtonProps['onClick'] = e => {
-    onClick?.(e)
-    install?.()
-  }
-  // if (!install) return <></>
+  if (!install) return <></>
   return (
-    <Button onClick={onClickInstall} {...props}>
+    <Button
+      disableElevation
+      variant="contained" size="large"
+      onClick={() => install()}
+    >
       모바일 App 설치 (PWA)
     </Button>
   )

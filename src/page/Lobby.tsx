@@ -1,12 +1,13 @@
 import {
-  Autocomplete, Box, TextField, Typography,
+  Autocomplete, Box, IconButton, MenuItem, TextField, Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { Info, InfoOutlined } from '@mui/icons-material'
+import { Close, Info, InfoOutlined } from '@mui/icons-material'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
+import { useEffect } from 'react'
 
 interface RoomForm {
   roomName: string
@@ -15,7 +16,7 @@ interface RoomForm {
 
 function Lobby () {
   /* Room List Autocomplete */
-  const [roomList] = useLocalStorage<string[]>('myRoomList', [])
+  const [myRoomList, setMyRoomList] = useLocalStorage<string[]>('myRoomList', [])
 
   /* Forms */
   const {
@@ -56,14 +57,21 @@ function Lobby () {
   })
 
   /* Auto Login to last entered room */
-  const [lastEnteredRoom] = useLocalStorage('lastEnteredRoom', '')
+  const [lastEnteredRoom, setLastEnteredRoom] = useLocalStorage('lastEnteredRoom', '')
   const { room: lastRoom, isLoading } = useRoom(lastEnteredRoom)
   const { state } = useLocation()
   const locState = state as { logout: boolean }
+  const isLoggedOut = locState?.logout ?? false
+
+  useEffect(() => {
+    if (!isLoggedOut) return
+    setLastEnteredRoom(undefined)
+  }, [isLoggedOut])
+
   if (lastEnteredRoom && isLoading) {
     return <></>
   }
-  if (!locState?.logout && lastRoom) {
+  if (!isLoggedOut && lastRoom) {
     return (
       <Navigate to={`/room/${lastEnteredRoom}`} replace />
     )
@@ -96,7 +104,7 @@ function Lobby () {
                 className="w-full"
                 freeSolo
                 autoSelect
-                options={roomList}
+                options={myRoomList}
                 onChange={(_, nextRoomName) => field.onChange(nextRoomName ?? '')}
                 renderInput={params => (
                   <TextField
@@ -112,6 +120,7 @@ function Lobby () {
                     helperText={(
                       <Box
                         component="span"
+                        className="!f-row-2"
                         visibility={fieldState.error ? 'visible' : 'hidden'}
                       >
                         <InfoOutlined className="!text-xs" />
@@ -121,6 +130,26 @@ function Lobby () {
                       </Box>
                     )}
                   />
+                )}
+                renderOption={(params, option) => (
+                  <MenuItem
+                    {...params}
+                    className="!f-row"
+                  >
+                    <Box>{option}</Box>
+                    <IconButton
+                      size="small"
+                      onClick={e => {
+                        e.stopPropagation()
+                        setMyRoomList(myRoomList.filter(_ => _ !== option))
+                      }}
+                    >
+                      <Close
+                        fontSize="small"
+                        className="opacity-30 hover:opacity-100"
+                      />
+                    </IconButton>
+                  </MenuItem>
                 )}
               />
             )}
@@ -137,11 +166,11 @@ function Lobby () {
                 required: false,
                 minLength: {
                   value: 8,
-                  message: 'Room Key는 8글자 이상이어야 합니다.',
+                  message: '방 열쇠는 8글자 이상이어야 합니다.',
                 },
                 maxLength: {
                   value: 16,
-                  message: 'Room Key는 16글자 이하여야 합니다.',
+                  message: '방 열쇠는 16글자 이하여야 합니다.',
                 },
               })}
               helperText={(

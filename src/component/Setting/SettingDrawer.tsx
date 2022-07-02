@@ -1,15 +1,14 @@
 import {
-  Box, Drawer, Button, IconButton,
+  Box, Drawer, IconButton,
   FormControlLabel, FormControl, InputLabel,
   Checkbox, Select, MenuItem, Typography, FormHelperText,
 } from '@mui/material'
-import { Check, Info, Settings } from '@mui/icons-material'
-import { useNavigate, useParams } from 'react-router-dom'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { useState } from 'react'
-import { useDeleteRoom } from '@core/query'
+import { Info, Settings } from '@mui/icons-material'
 import { useSettingSlice } from '@core/store/settingSlice'
 import PWAInstallButton from './PWAInstallButton'
+import DeleteRoomButton from './DeleteRoomButton'
+import CopyRoomLinkButton from './CopyRoomLinkButton'
+import ExitRoomButton from './ExitRoomButton'
 
 function SettingPanel () {
   const {
@@ -18,8 +17,6 @@ function SettingPanel () {
     setGroupBy,
     setOrderBy,
   } = useSettingSlice()
-
-  const navigate = useNavigate()
 
   const groupByLabel = {
     ORIGIN: '원작으로 그룹핑',
@@ -33,10 +30,6 @@ function SettingPanel () {
     RATING: '선호도 순으로 정렬',
     RANDOM: '무작위 순서로 정렬',
   }
-
-  const [copiedLink, setCopiedLink] = useState('')
-  const { id: roomId = '' } = useParams()
-  const { deleteRoom } = useDeleteRoom(roomId)
 
   const isShuffle = setting.orderBy === 'RANDOM'
 
@@ -96,39 +89,10 @@ function SettingPanel () {
       </Box>
       {/* Actions */}
       <Box className="f-col-8">
-        <Button
-          variant="contained" size="large"
-          className="!bg-green-500 !shadow-sm"
-          onClick={() => navigate('/', { state: { logout: true } })}
-        >
-          로비로 이동
-        </Button>
-        <CopyToClipboard
-          text={location.href}
-          onCopy={setCopiedLink}
-        >
-          <Button
-            variant="contained" size="large"
-            className="!bg-yellow-400 !text-black !shadow-sm"
-          >
-            이 방의 링크 복사
-            {copiedLink && (
-              <Check color="success" fontSize="small" className="ml-4" />
-            )}
-          </Button>
-        </CopyToClipboard>
-        <Button
-          variant="contained" size="large"
-          color="error"
-          className="!shadow-sm"
-          onClick={() => deleteRoom()}
-        >
-          방 청소하기
-        </Button>
-        <PWAInstallButton
-          disableElevation
-          variant="contained" size="large"
-        />
+        <ExitRoomButton />
+        <CopyRoomLinkButton />
+        <DeleteRoomButton />
+        <PWAInstallButton />
       </Box>
     </Box>
   )
