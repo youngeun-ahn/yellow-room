@@ -26,7 +26,7 @@ function DeleteRoomButton () {
     if (!roomId) return
     deleteRoom({
       onSuccess () {
-        navigate('/lobby', { replace: true, state: { logout: true } })
+        navigate('/', { replace: true, state: { logout: true } })
       },
     })
   })

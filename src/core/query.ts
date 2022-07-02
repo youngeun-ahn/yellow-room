@@ -4,11 +4,11 @@ import {
   useFirestoreDocumentMutation,
   useFirestoreDocumentData,
   useFirestoreDocumentDeletion,
+  useFirestoreTransaction,
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
 import { useDeepCompareCallback } from 'use-deep-compare'
 import { groupBy } from 'lodash'
-import { useNavigate } from 'react-router-dom'
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
 import { useSettingSlice } from './store/settingSlice'
@@ -81,25 +81,6 @@ export const useRoom = (roomId: string) => {
     ...result
   } = useFirestoreDocumentData([ROOT, roomId], roomDocRef)
   return { room, ...result }
-}
-
-/** Room 삭제 */
-export const useDeleteRoom = (roomId: string = EMPTY_ROOM_ID) => {
-  const navigate = useNavigate()
-
-  const roomDocRef = getRoomDocRef(roomId)
-  const { mutate, ...result } = useFirestoreDocumentDeletion(roomDocRef, {
-    onSuccess () {
-      navigate('/', { replace: true, state: { logout: true } })
-    },
-  })
-
-  return {
-    ...result,
-    deleteRoom: (options?: Parameters<typeof mutate>[1]) => {
-      mutate(undefined, options)
-    },
-  }
 }
 
 /** Song 목록 조회 */
@@ -186,7 +167,7 @@ export const useEditSong = (roomId: string, songId?: string) => {
   return {
     ...result,
     songDocId,
-    editSong: (songForm: Song, options?: Parameters<typeof mutate>[1]) => {
+    editSong (songForm: Song, options?: Parameters<typeof mutate>[1]) {
       mutate({ ...songForm, id: songDocId }, options)
     },
   }
@@ -208,9 +189,33 @@ export const useDeleteSong = (roomId: string, songId = EMPTY_SONG_ID) => {
 
   return {
     ...result,
-    deleteSong: (options?: Parameters<typeof mutate>[1]) => {
+    deleteSong (options?: Parameters<typeof mutate>[1]) {
       if (!songId || songId === EMPTY_SONG_ID) return
       mutate(undefined, options)
+    },
+  }
+}
+
+/** Room 삭제 */
+export const useDeleteRoom = (roomId: string = EMPTY_ROOM_ID) => {
+  const roomDocRef = getRoomDocRef(roomId)
+  const { songList } = useSongList(roomId)
+
+  const {
+    mutate: deleteRoom,
+    ...result
+  } = useFirestoreTransaction(firestore, async tsx => {
+    songList.forEach(song => {
+      const songRef = getSongDocRef(roomId, song.id)
+      tsx.delete(songRef)
+    })
+    tsx.delete(roomDocRef)
+  })
+
+  return {
+    ...result,
+    deleteRoom (options?: Parameters<typeof deleteRoom>[1]) {
+      deleteRoom(undefined, options)
     },
   }
 }
