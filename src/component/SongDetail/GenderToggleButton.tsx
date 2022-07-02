@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 interface Props {
   gender: Gender
-  onChange: (gender: Gender) => void
+  onChange?: (gender: Gender) => void
   disabled?: boolean
 }
 
@@ -41,7 +41,7 @@ function GenderToggleButton ({ gender, onChange, disabled }: Props) {
   return (
     <IconButton
       size="small" disabled={disabled}
-      onClick={() => onChange(next)}
+      onClick={() => onChange?.(next)}
     >
       <SvgIcon component={icon} fontSize="small" sx={{ color }} />
     </IconButton>

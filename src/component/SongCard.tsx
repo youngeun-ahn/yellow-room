@@ -1,20 +1,13 @@
-import { EditOutlined } from '@mui/icons-material'
+import { EditOutlined, FastForward } from '@mui/icons-material'
 import { Box, Card, CardContent, CardProps, IconButton, Typography } from '@mui/material'
 import classNames from 'classnames'
 import { useSongDetailContext } from './SongDetail/context'
+import GenderToggleButton from './SongDetail/GenderToggleButton'
 
 interface Props extends CardProps {
   song: Song
 }
 function SongCard ({ song, className, ...cardProps }: Props) {
-  const keyColorMap = {
-    MAN: 'blue',
-    WOMAN: 'pink',
-    BOTH: 'purple',
-    NONE: 'black',
-  } as const
-  const keyColor = keyColorMap[song.gender]
-
   const titleLabel = song.singer
     ? `${song.title} (${song.singer})`
     : song.title
@@ -40,16 +33,28 @@ function SongCard ({ song, className, ...cardProps }: Props) {
           <EditOutlined fontSize="small" />
         </IconButton>
         <Box className="f-col-4">
-          {/* 번호 & 키 */}
+          {/* 번호 & 키 & 템포 */}
           <Box className="f-row-start-4">
-            <Typography fontWeight="bold">
+            <Typography fontWeight="bold" className="min-w-[2.8rem]">
               {song.number}
             </Typography>
             {song.key !== 0 && (
-              <Typography color={keyColor}>
-                {song.key > 0 && '+'}
-                {song.key}
-              </Typography>
+              <Box className="f-row">
+                <GenderToggleButton gender={song.gender} disabled />
+                <Typography className="!-ml-4">
+                  {song.key > 0 && '+'}
+                  {song.key}
+                </Typography>
+              </Box>
+            )}
+            {song.tempo !== 0 && (
+              <Box className="f-row">
+                <FastForward color="info" />
+                <Typography>
+                  {song.tempo > 0 && '+'}
+                  {song.tempo}
+                </Typography>
+              </Box>
             )}
           </Box>
           {/* 제목 (가수) */}
