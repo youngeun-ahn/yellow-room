@@ -101,7 +101,7 @@ function Lobby () {
             }}
             render={({ field, fieldState }) => (
               <Autocomplete
-                className="w-full"
+                fullWidth
                 freeSolo
                 autoSelect
                 options={myRoomList}
@@ -156,9 +156,8 @@ function Lobby () {
           />
           <Box className="f-col-4">
             <TextField
-              error={Boolean(errors.roomPwd)}
+              fullWidth
               label="Private Room Key (* Optional)"
-              className="w-full"
               variant="standard"
               type="password"
               inputProps={{ maxLength: 16 }}
@@ -173,6 +172,7 @@ function Lobby () {
                   message: '방 열쇠는 16글자 이하여야 합니다.',
                 },
               })}
+              error={Boolean(errors.roomPwd)}
               helperText={(
                 <Box
                   component="span"
@@ -208,10 +208,11 @@ function Lobby () {
           </Box>
         </Box>
         <LoadingButton
+          fullWidth
           loading={isLoadingNewRoom}
           variant="contained"
           size="large"
-          className="w-full !mt-8 !rounded-none"
+          className="!mt-8 !rounded-none"
           onClick={onClickEnter}
         >
           노란 방 입장

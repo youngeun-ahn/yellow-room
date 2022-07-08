@@ -1,11 +1,11 @@
 import { useSongList } from '@core/query'
 import { toTagList, uniqSort } from '@core/util'
-import { InfoOutlined } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
   Autocomplete, TextField, Checkbox, Rating,
 } from '@mui/material'
+import { KeyboardEvent } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useSongDetailContext } from './context'
@@ -23,6 +23,8 @@ function SongForm ({ songForm }: Props) {
     watch,
     setValue,
     formState: { errors = {} },
+    trigger,
+    setFocus,
   } = songForm
 
   const { id: roomId = '' } = useParams()
@@ -30,6 +32,14 @@ function SongForm ({ songForm }: Props) {
   const singerList = uniqSort(songList.map(_ => _.singer))
   const originList = uniqSort(songList.map(_ => _.origin))
   const tagList = uniqSort(songList.flatMap(_ => _.tagList))
+
+  const onNextFocus = (curr: keyof Song, next: keyof Song) => (e: KeyboardEvent) => {
+    if (e.key !== 'Enter') return
+    e.stopPropagation()
+    trigger(curr).then(isValid => {
+      if (isValid) setFocus(next)
+    })
+  }
 
   return (
     <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap flex-1">
@@ -51,18 +61,12 @@ function SongForm ({ songForm }: Props) {
               return `이미 등록된 노래 번호 입니다(${found.title}).`
             },
           })}
+          onKeyDown={onNextFocus('number', 'key')}
           error={Boolean(errors.number)}
           helperText={errors.number?.message && (
-            <>
-              <InfoOutlined />
-              <Box
-                component="span"
-                color="red"
-                className="w-fit max-w-xs whitespace-nowrap"
-              >
-                {errors.number?.message}
-              </Box>
-            </>
+            <span className="w-fit max-w-xs whitespace-nowrap mt-[0.6rem]">
+              {errors.number?.message}
+            </span>
           )}
           disabled={isReadonly}
         />
@@ -72,7 +76,9 @@ function SongForm ({ songForm }: Props) {
             variant="standard" type="number"
             className="w-[6rem]"
             {...register('key')}
+            onKeyDown={onNextFocus('key', 'tempo')}
             InputProps={{
+              inputProps: { enterkeyhint: 'next' },
               endAdornment: (
                 <GenderToggleButton
                   gender={watch('gender')}
@@ -88,6 +94,7 @@ function SongForm ({ songForm }: Props) {
             variant="standard" type="number"
             className="w-[6rem]"
             {...register('tempo')}
+            onKeyDown={onNextFocus('tempo', 'title')}
             disabled={isReadonly}
           />
         </Box>
@@ -100,6 +107,7 @@ function SongForm ({ songForm }: Props) {
         {...register('title', {
           required: '노래 제목은 반드시 입력해야 합니다.',
         })}
+        onKeyDown={onNextFocus('title', 'singer')}
         error={Boolean(errors.title)}
         helperText={errors.title?.message}
         disabled={isReadonly}
@@ -115,8 +123,10 @@ function SongForm ({ songForm }: Props) {
             options={singerList}
             value={field.value}
             onChange={(_, nextSinger) => setValue('singer', nextSinger ?? '')}
+            onKeyDown={onNextFocus('singer', 'origin')}
             renderInput={({ InputProps, inputProps, ...params }) => (
               <TextField
+                name="singer"
                 {...params}
                 label="가수"
                 variant="standard"
@@ -127,6 +137,7 @@ function SongForm ({ songForm }: Props) {
                     maxLength: 64,
                   },
                 }}
+                inputRef={field.ref}
               />
             )}
             disabled={isReadonly}
@@ -145,6 +156,7 @@ function SongForm ({ songForm }: Props) {
             options={originList}
             value={field.value}
             onChange={(_, nextOrigin) => setValue('origin', nextOrigin ?? '')}
+            onKeyDown={onNextFocus('origin', 'rating')}
             renderInput={({ InputProps, inputProps, ...params }) => (
               <TextField
                 {...params}
@@ -157,6 +169,7 @@ function SongForm ({ songForm }: Props) {
                     maxLength: 64,
                   },
                 }}
+                inputRef={field.ref}
               />
             )}
             disabled={isReadonly}
@@ -176,6 +189,7 @@ function SongForm ({ songForm }: Props) {
                 value={field.value}
                 readOnly={isReadonly}
                 onChange={(_, nextRating) => setValue('rating', nextRating ?? 0)}
+                onKeyDown={onNextFocus('rating', 'isBlacklist')}
               />
             )}
             control={control}
@@ -193,6 +207,7 @@ function SongForm ({ songForm }: Props) {
                   className="!p-2 !mr-2"
                   checked={field.value}
                   onChange={(_, checked) => setValue('isBlacklist', checked)}
+                  onKeyDown={onNextFocus('isBlacklist', 'tagList')}
                 />
               )}
               disabled={isReadonly}
@@ -221,6 +236,7 @@ function SongForm ({ songForm }: Props) {
                 {...params}
                 variant="standard"
                 label="태그 (# 또는 공백으로 구분)"
+                inputRef={field.ref}
               />
             )}
             disabled={isReadonly}
