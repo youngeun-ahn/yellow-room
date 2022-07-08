@@ -77,7 +77,6 @@ function DeleteRoomButton () {
               </Button>
               <Button
                 variant="contained" size="large"
-                disableElevation
                 color="error"
                 onClick={onClickDelete}
               >

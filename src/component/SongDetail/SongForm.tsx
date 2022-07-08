@@ -32,7 +32,7 @@ function SongForm ({ songForm }: Props) {
   const tagList = uniqSort(songList.flatMap(_ => _.tagList))
 
   return (
-    <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap">
+    <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap flex-1">
       {/* 번호, 키 */}
       <Box className="f-row-8 !items-start">
         <TextField

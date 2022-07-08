@@ -31,6 +31,16 @@ const THEME = createTheme({
         },
       },
     },
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: {
+          fontWeight: 'bold',
+        },
+      },
+    },
   },
 })
 

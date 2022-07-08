@@ -141,7 +141,7 @@ export const useSongList = (roomId: string) => {
         () => isKeywordIncludes(song.singer, keyword),
         () => isKeywordIncludes(song.origin, keyword),
         () => isKeywordIncludes(song.number.toString(), keyword),
-        () => song.tagList.some(tag => isKeywordIncludes(tag, keyword)),
+        () => song.tagList.some(tag => isKeywordIncludes(`#${tag}`, keyword)),
       ].some(lazyExp => lazyExp())
     ))
   }, [songList])

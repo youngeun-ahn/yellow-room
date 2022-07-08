@@ -211,11 +211,10 @@ function Lobby () {
           loading={isLoadingNewRoom}
           variant="contained"
           size="large"
-          disableElevation
           className="w-full !mt-8 !rounded-none"
           onClick={onClickEnter}
         >
-          Enter My Yellow Room!
+          노란 방 입장
         </LoadingButton>
       </Box>
     </>

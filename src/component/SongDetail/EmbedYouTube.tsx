@@ -52,7 +52,7 @@ function EmbedYouTube ({ youtube, onChange, readOnly }: Props) {
                   <TextField
                     placeholder="e.g) https://www.youtube.com/watch?v=..."
                     variant="standard" fullWidth
-                    className="!min-w-[18rem]"
+                    className="!w-[18rem] max-w-full"
                     {...register('youtube', {
                       validate (link) {
                         const trimmed = link.trim()
@@ -67,9 +67,7 @@ function EmbedYouTube ({ youtube, onChange, readOnly }: Props) {
                   />
                 </DialogContent>
                 <DialogActions className="!px-12 !pb-12">
-                  <Button
-                    onClick={popupState.close}
-                  >
+                  <Button onClick={popupState.close}>
                     닫기
                   </Button>
                   <Button
