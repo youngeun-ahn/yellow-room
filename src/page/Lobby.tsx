@@ -60,18 +60,18 @@ function Lobby () {
   const [lastEnteredRoom, setLastEnteredRoom] = useLocalStorage('lastEnteredRoom', '')
   const { room: lastRoom, isLoading } = useRoom(lastEnteredRoom)
   const { state } = useLocation()
-  const locState = state as { logout: boolean }
-  const isLoggedOut = locState?.logout ?? false
+  const locState = state as { exit: boolean }
+  const isExited = locState?.exit ?? false
 
   useEffect(() => {
-    if (!isLoggedOut) return
+    if (!isExited) return
     setLastEnteredRoom(undefined)
-  }, [isLoggedOut])
+  }, [isExited])
 
   if (lastEnteredRoom && isLoading) {
     return <></>
   }
-  if (!isLoggedOut && lastRoom) {
+  if (!isExited && lastRoom) {
     return (
       <Navigate to={`/room/${lastEnteredRoom}`} replace />
     )

@@ -7,7 +7,7 @@ function ExitRoomButton () {
     <Button
       variant="contained" size="large"
       className="!bg-green-500 !shadow-sm"
-      onClick={() => navigate('/', { state: { logout: true } })}
+      onClick={() => navigate('/', { state: { exit: true } })}
     >
       로비로 이동
     </Button>
