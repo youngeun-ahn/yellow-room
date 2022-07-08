@@ -60,6 +60,7 @@ function Room () {
         <Add fontSize="large" />
       </Fab>
       <Box className="f-col-16 w-full h-full pt-[4.2rem] sm:pt-[5.4rem]">
+        {/* TODO: 혹시 좀 느려진다면 debounce 검토 */}
         <TextField
           value={keyword}
           variant="standard"

@@ -110,7 +110,7 @@ function Lobby () {
                   <TextField
                     error={Boolean(fieldState.error)}
                     required
-                    label="Room Name"
+                    label="방 이름"
                     variant="standard"
                     {...params}
                     inputProps={{
@@ -157,21 +157,21 @@ function Lobby () {
           <Box className="f-col-4">
             <TextField
               fullWidth
-              label="Private Room Key (* Optional)"
+              label="방 열쇠 (선택사항)"
               variant="standard"
               type="password"
-              inputProps={{ maxLength: 16 }}
+              inputProps={{ maxLength: 24 }}
               {...register('roomPwd', {
                 required: false,
                 minLength: {
                   value: 8,
                   message: '방 열쇠는 8글자 이상이어야 합니다.',
                 },
-                maxLength: {
-                  value: 16,
-                  message: '방 열쇠는 16글자 이하여야 합니다.',
-                },
               })}
+              onKeyDown={e => {
+                if (e.key !== 'Enter') return
+                onClickEnter()
+              }}
               error={Boolean(errors.roomPwd)}
               helperText={(
                 <Box
