@@ -113,6 +113,7 @@ function SettingDrawer ({ open, toggle }: Props) {
         anchor="left"
         open={open}
         onClose={() => toggle(false)}
+        keepMounted
       >
         <SettingPanel />
       </Drawer>

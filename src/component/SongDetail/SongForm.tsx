@@ -78,7 +78,6 @@ function SongForm ({ songForm }: Props) {
             {...register('key')}
             onKeyDown={onNextFocus('key', 'tempo')}
             InputProps={{
-              inputProps: { enterkeyhint: 'next' },
               endAdornment: (
                 <GenderToggleButton
                   gender={watch('gender')}

@@ -6,12 +6,13 @@ type TimerID = ReturnType<typeof setTimeout> | null
 
 function PWAInstallButton () {
   const install = usePWAInstall()
-  const [isPWAEnabled, setPWAEnabled] = useState(false)
+  const isInstallReady = install !== null
+  const [isPWAEnabled, setPWAEnabled] = useState(isInstallReady)
   const [timer, setTimer] = useState<TimerID>(null)
 
   // 10초 대기 후 disable 처리
   useEffect(() => {
-    if (isPWAEnabled || timer) return
+    if (isPWAEnabled || isInstallReady || timer) return
     const timeout = setTimeout(() => {
       setPWAEnabled(false)
       setTimer(null)
@@ -20,7 +21,6 @@ function PWAInstallButton () {
   }, [])
 
   // 언제든지 install 함수가 주어지면 enable 처리
-  const isInstallReady = install !== null
   useEffect(() => {
     if (!isInstallReady) return
     if (timer) {

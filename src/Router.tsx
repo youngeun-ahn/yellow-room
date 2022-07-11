@@ -20,8 +20,8 @@ function Router () {
       <Routes>
         <Route path="/" element={<Page />}>
           <Route index element={<Lobby />} />
-          <Route path="/room/:id" element={<Room />} />
-          <Route path="/*" element={<Navigate to="/" />} />
+          <Route path="room/:id" element={<Room />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
     </BrowserRouter>

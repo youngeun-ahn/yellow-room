@@ -1,7 +1,7 @@
 import { useDeleteSong, useEditSong } from '@core/query'
 import { Drawer, DialogContent } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useLayoutEffect, useState } from 'react'
 import { useDeepCompareEffect } from 'use-deep-compare'
 import Header from './Header'
@@ -93,13 +93,30 @@ function SongDetail ({ onClose }: Props) {
 
 /* NOTE: Drawer가 닫혀있을 때는 unmount하여 useForm 초기화 및 렌더링 최적화 */
 function SongDetailDrawer () {
-  const { open } = useSongDetailContext()
+  const { open, closeSongDetail } = useSongDetailContext()
   const [isMounted, setIsMounted] = useState(false)
 
+  /* Mobile back 버튼 핸들링을 위해 location state로 제어 */
+  const { state } = useLocation()
+  const locState = state as { drawer?: 'detail' }
+  const isOpenLocState = locState?.drawer === 'detail'
+  const navigate = useNavigate()
+
   useLayoutEffect(() => {
-    if (!open) return
+    if (!open) {
+      if (isOpenLocState) {
+        navigate('', { replace: true })
+      }
+      return
+    }
     setIsMounted(true)
+    navigate('', { state: { drawer: 'detail' } })
   }, [open])
+
+  useLayoutEffect(() => {
+    if (isOpenLocState) return
+    closeSongDetail()
+  }, [isOpenLocState])
 
   if (!open && !isMounted) {
     return <></>
