@@ -1,4 +1,5 @@
 const plugin = require('tailwindcss/plugin')
+const twTextShadow = require('tailwindcss-textshadow')
 
 const flexUtil = plugin(({ addUtilities, matchUtilities, theme }) => {
   const flex = {
@@ -72,5 +73,5 @@ module.exports = {
       24: '2.4rem',
     },
   },
-  plugins: [flexUtil],
+  plugins: [flexUtil, twTextShadow],
 }

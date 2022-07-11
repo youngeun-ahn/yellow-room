@@ -2,8 +2,8 @@
 ## Objective
 Link: https://frebern-yellow-room.web.app
 
-거기 휴대폰 메모 앱에 수십 수백곡의 노래방 애창곡 목록을 적어둔 당신!  
-맨날 노래방가서 뭐 부르지.. 하고 고민하는 당신!  
+거기 휴대폰 메모 앱에 수백곡의 애창곡을 적어둔 당신!  
+노래방에 갈 때마다 뭐 부르지... 하고 고민하는 당신!  
   
 이제는 **Yellow Room** 으로 노래방 노래 목록을 관리하세요!  
   
@@ -18,14 +18,14 @@ Link: https://frebern-yellow-room.web.app
 ---
 ## 개발 환경
 ### Core Framework
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![React](https://img.shields.io/badge/react-20232a.svg?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/typescript-007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Redux](https://img.shields.io/badge/redux-593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
 ![React Query](https://img.shields.io/badge/-React%20Query-FF4154?style=for-the-badge&logo=react%20query&logoColor=white)
 
 ### Design Library
-![MUI](https://img.shields.io/badge/MUI-%230081CB.svg?style=for-the-badge&logo=mui&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-0081CB.svg?style=for-the-badge&logo=mui&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
 ### Backend/Hosting
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)

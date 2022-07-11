@@ -1,17 +1,49 @@
-import { Button } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import { useEffect, useState } from 'react'
 import { usePWAInstall } from 'react-use-pwa-install'
+
+type TimerID = ReturnType<typeof setTimeout> | null
 
 function PWAInstallButton () {
   const install = usePWAInstall()
-  if (!install) return <></>
+  const [isPWAEnabled, setPWAEnabled] = useState(false)
+  const [timer, setTimer] = useState<TimerID>(null)
+
+  // 10초 대기 후 disable 처리
+  useEffect(() => {
+    if (isPWAEnabled || timer) return
+    const timeout = setTimeout(() => {
+      setPWAEnabled(false)
+      setTimer(null)
+    }, 10000)
+    setTimer(timeout)
+  }, [])
+
+  // 언제든지 install 함수가 주어지면 enable 처리
+  const isInstallReady = install !== null
+  useEffect(() => {
+    if (!isInstallReady) return
+    if (timer) {
+      clearTimeout(timer)
+      setTimer(null)
+    }
+    setPWAEnabled(true)
+  }, [isInstallReady])
+
+  const isLoading = Boolean(timer)
+  if (!isLoading && !isPWAEnabled) return <></>
+
   return (
-    <Button
+    <LoadingButton
       disableElevation
+      loading={isLoading}
+      loadingPosition="start"
+      startIcon={<></>}
       variant="contained" size="large"
-      onClick={() => install()}
+      onClick={install}
     >
       모바일 App 설치 (PWA)
-    </Button>
+    </LoadingButton>
   )
 }
 

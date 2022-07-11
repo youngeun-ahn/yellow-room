@@ -88,7 +88,7 @@ function SettingPanel () {
         </FormControl>
       </Box>
       {/* Actions */}
-      <Box className="f-col-8">
+      <Box className="f-col-8 mb-24">
         <ExitRoomButton />
         <CopyRoomLinkButton />
         <DeleteRoomButton />
@@ -117,8 +117,10 @@ function SettingDrawer ({ open, toggle }: Props) {
         <SettingPanel />
       </Drawer>
       {open && (
-        <Typography className="fixed right-8 bottom-8">
-          Copyright 2022. Youngeun.Ahn all rights reserved
+        <Typography
+          className="fixed right-8 bottom-8 pointer-events-none text-shadow-sm"
+        >
+          Copyright 2022. 안윤근 all rights reserved
         </Typography>
       )}
     </>
