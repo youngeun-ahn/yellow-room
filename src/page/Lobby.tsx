@@ -1,13 +1,13 @@
 import {
-  Autocomplete, Box, IconButton, MenuItem, TextField, Typography,
+  Autocomplete, Box, IconButton, MenuItem, SvgIcon, TextField, Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { Close, Info, InfoOutlined } from '@mui/icons-material'
+import { Close, Info, InfoOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 interface RoomForm {
   roomName: string
@@ -34,6 +34,7 @@ function Lobby () {
   })
   const { roomName, roomPwd } = watch()
   const { errors, dirtyFields } = formState
+  const [isKeyVisible, setKeyVisibility] = useState(false)
 
   /* Login */
   const navigate = useNavigate()
@@ -159,8 +160,17 @@ function Lobby () {
               fullWidth
               label="방 열쇠 (선택사항)"
               variant="standard"
-              type="password"
-              inputProps={{ maxLength: 24 }}
+              type={isKeyVisible ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <IconButton onClick={() => setKeyVisibility(!isKeyVisible)} size="small">
+                    <SvgIcon component={isKeyVisible ? Visibility : VisibilityOff} fontSize="small" />
+                  </IconButton>
+                ),
+                inputProps: {
+                  maxLength: 24,
+                },
+              }}
               {...register('roomPwd', {
                 required: false,
                 minLength: {
