@@ -47,15 +47,6 @@ function SongCard ({ song, className, ...cardProps }: Props) {
                 </Typography>
               </Box>
             )}
-            {song.tempo !== 0 && (
-              <Box className="f-row">
-                <FastForward color="info" />
-                <Typography>
-                  {song.tempo > 0 && '+'}
-                  {song.tempo}
-                </Typography>
-              </Box>
-            )}
           </Box>
           {/* 제목 (가수) */}
           <Box>{titleLabel}</Box>

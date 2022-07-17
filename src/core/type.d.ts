@@ -11,7 +11,6 @@ declare interface Song {
   number: number
   key: number
   gender: Gender
-  tempo : number
   title: string
   singer: string
   origin: string

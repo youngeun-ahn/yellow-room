@@ -44,11 +44,11 @@ function SongForm ({ songForm }: Props) {
   return (
     <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap flex-1">
       {/* 번호, 키 */}
-      <Box className="f-row-8 !items-start">
+      <Box className="f-row-start-12 !items-start">
         <TextField
           label="번호"
           variant="standard" type="number" required
-          className="w-[6rem]"
+          className="w-[6.4rem]"
           {...register('number', {
             required: '노래 번호는 반드시 입력해야 합니다.',
             validate (num) {
@@ -70,33 +70,23 @@ function SongForm ({ songForm }: Props) {
           )}
           disabled={isReadonly}
         />
-        <Box className="f-row-8">
-          <TextField
-            label="키"
-            variant="standard" type="number"
-            className="w-[6rem]"
-            {...register('key')}
-            onKeyDown={onNextFocus('key', 'tempo')}
-            InputProps={{
-              endAdornment: (
-                <GenderToggleButton
-                  gender={watch('gender')}
-                  onChange={gender => setValue('gender', gender)}
-                  disabled={isReadonly}
-                />
-              ),
-            }}
-            disabled={isReadonly}
-          />
-          <TextField
-            label="템포"
-            variant="standard" type="number"
-            className="w-[6rem]"
-            {...register('tempo')}
-            onKeyDown={onNextFocus('tempo', 'title')}
-            disabled={isReadonly}
-          />
-        </Box>
+        <TextField
+          label="키"
+          variant="standard" type="number"
+          className="w-[6.4rem]"
+          {...register('key')}
+          onKeyDown={onNextFocus('key', 'title')}
+          InputProps={{
+            endAdornment: (
+              <GenderToggleButton
+                gender={watch('gender')}
+                onChange={gender => setValue('gender', gender)}
+                disabled={isReadonly}
+              />
+            ),
+          }}
+          disabled={isReadonly}
+        />
       </Box>
       {/* 노래 제목 */}
       <TextField
@@ -155,7 +145,7 @@ function SongForm ({ songForm }: Props) {
             options={originList}
             value={field.value}
             onChange={(_, nextOrigin) => setValue('origin', nextOrigin ?? '')}
-            onKeyDown={onNextFocus('origin', 'rating')}
+            onKeyDown={onNextFocus('origin', 'tagList')}
             renderInput={({ InputProps, inputProps, ...params }) => (
               <TextField
                 {...params}
@@ -176,7 +166,34 @@ function SongForm ({ songForm }: Props) {
         )}
         control={control}
       />
-      <Box className="f-row-start-24 !items-end">
+      {/* 태그 */}
+      <Controller
+        name="tagList"
+        render={({ field }) => (
+          <Autocomplete
+            id="select-tag-list"
+            freeSolo autoSelect multiple
+            clearOnEscape clearOnBlur
+            options={tagList}
+            value={uniqSort(field.value)}
+            onChange={(_, nextTagList) => {
+              const tags = (nextTagList ?? []).flatMap(toTagList)
+              setValue('tagList', uniqSort(tags ?? []))
+            }}
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="태그 (# 또는 공백으로 구분)"
+                inputRef={field.ref}
+              />
+            )}
+            disabled={isReadonly}
+          />
+        )}
+        control={control}
+      />
+      <Box className="f-row-start-24 !items-end my-8">
         {/* 선호도 */}
         <FormControl className="f-col-8">
           <FormLabel>선호도</FormLabel>
@@ -216,33 +233,6 @@ function SongForm ({ songForm }: Props) {
           defaultValue={false}
         />
       </Box>
-      {/* 태그 */}
-      <Controller
-        name="tagList"
-        render={({ field }) => (
-          <Autocomplete
-            id="select-tag-list"
-            freeSolo autoSelect multiple
-            clearOnEscape clearOnBlur
-            options={tagList}
-            value={uniqSort(field.value)}
-            onChange={(_, nextTagList) => {
-              const tags = (nextTagList ?? []).flatMap(toTagList)
-              setValue('tagList', uniqSort(tags ?? []))
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="standard"
-                label="태그 (# 또는 공백으로 구분)"
-                inputRef={field.ref}
-              />
-            )}
-            disabled={isReadonly}
-          />
-        )}
-        control={control}
-      />
       {/* 메모 */}
       <TextField
         label="메모"

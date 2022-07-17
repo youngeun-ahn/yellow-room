@@ -1,5 +1,5 @@
 import { Close, Delete, Edit, Replay, Save } from '@mui/icons-material'
-import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box } from '@mui/material'
+import { AppBar, IconButton, SvgIcon, Toolbar, Typography, Box, Tooltip } from '@mui/material'
 import { useCallback, useMemo } from 'react'
 import { useSongDetailContext } from './context'
 
@@ -7,8 +7,9 @@ interface Props {
   onSave: () => void
   onReset: () => void
   onDelete: () => void
+  isLoading: boolean
 }
-function Header ({ onSave, onReset, onDelete }: Props) {
+function Header ({ onSave, onReset, onDelete, isLoading }: Props) {
   const {
     open, mode,
     isNew, isEditable, isReadonly,
@@ -18,7 +19,7 @@ function Header ({ onSave, onReset, onDelete }: Props) {
 
   const title = useMemo(() => {
     if (isNew) {
-      return '새 노래 등록'
+      return '새 노래 넣기'
     }
     if (isEditable) {
       return '노래 편집'
@@ -53,19 +54,30 @@ function Header ({ onSave, onReset, onDelete }: Props) {
         <Box className="f-row sm:gap-4">
           {/* 삭제 */}
           {!isReadonly && !isNew && (
-            <IconButton onClick={onDelete}>
+            <IconButton
+              onClick={onDelete}
+              disabled={isLoading}
+            >
               <Delete htmlColor="white" />
             </IconButton>
           )}
           {/* 저장 */}
           {!isReadonly && (
-            <IconButton onClick={onSave}>
-              <Save htmlColor="white" />
-            </IconButton>
+            <Tooltip title="Ctrl + Enter">
+              <IconButton
+                onClick={onSave}
+                disabled={isLoading}
+              >
+                <Save htmlColor="white" />
+              </IconButton>
+            </Tooltip>
           )}
           {/* Editable 토글 */}
           {!isNew && (
-            <IconButton onClick={onToggleEditable}>
+            <IconButton
+              onClick={onToggleEditable}
+              disabled={isLoading}
+            >
               <SvgIcon
                 sx={{ color: 'white' }}
                 component={isEditable ? Replay : Edit}

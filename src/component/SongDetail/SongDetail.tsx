@@ -25,7 +25,6 @@ function SongDetail ({ onClose }: Props) {
     songForm.reset({
       // number: 0, // NOTE: 생성시 number 필드는 일단 빈 필드로 둬야함.
       key: 0,
-      tempo: 0,
       gender: 'NONE',
       title: '',
       singer: '',
@@ -43,11 +42,21 @@ function SongDetail ({ onClose }: Props) {
   const { handleSubmit, reset } = songForm
 
   const { id: roomId = '' } = useParams()
-  const { editSong } = useEditSong(roomId, song?.id)
+  const {
+    editSong,
+    isLoading: isSaving,
+  } = useEditSong(roomId, song?.id)
+  const {
+    deleteSong,
+    isLoading: isDeleting,
+  } = useDeleteSong(roomId, song?.id)
+  const isLoading = isSaving || isDeleting
+
   const onSave = handleSubmit(form => {
+    if (isLoading) return
     const {
       title, singer, origin,
-      number, key, tempo,
+      number, key,
       ...restForm
     } = form
 
@@ -57,19 +66,21 @@ function SongDetail ({ onClose }: Props) {
       origin: origin.trim(),
       number: Number.parseInt(String(number), 10),
       key: Number.parseInt(String(key), 10),
-      tempo: Number.parseInt(String(tempo), 10),
       ...restForm,
     }, {
       onSuccess: closeSongDetail,
     })
   })
 
-  const { deleteSong } = useDeleteSong(roomId, song?.id)
-  const onDelete = () => deleteSong({ onSuccess: closeSongDetail })
+  const onDelete = () => {
+    if (isLoading) return
+    deleteSong({ onSuccess: closeSongDetail })
+  }
 
   return (
     <>
       <Header
+        isLoading={isLoading}
         onSave={onSave}
         onReset={() => reset(song)}
         onDelete={onDelete}
@@ -82,6 +93,12 @@ function SongDetail ({ onClose }: Props) {
           onClose()
         }}
         anchor="bottom"
+        onKeyDown={e => {
+          const isCtrlEnter = e.ctrlKey && ['\n', 'enter', 'Enter'].includes(e.key)
+          if (!isCtrlEnter) return
+          if (isLoading) return
+          onSave()
+        }}
       >
         <DialogContent className="h-screen !pt-[4.8rem] sm:!pt-[6.4rem] bg-yellow-50">
           <SongForm songForm={songForm} />
@@ -121,7 +138,6 @@ function SongDetailDrawer () {
   if (!open && !isMounted) {
     return <></>
   }
-
   return <SongDetail onClose={() => setIsMounted(false)} />
 }
 
