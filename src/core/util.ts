@@ -1,6 +1,7 @@
 import { sortedUniq } from 'lodash'
 import sha1 from 'sha1'
 import Hangul from 'hangul-js'
+import { useEffect, useState } from 'react'
 
 export const isKeywordIncludes = (
   target: string,
@@ -44,4 +45,21 @@ export function toTagList (str: string) {
 export const hash = (str: string) => {
   if (!str?.trim()) return ''
   return sha1(str)
+}
+
+// https://usehooks.com/useDebounce
+export function useDebounce<T> (value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  useEffect(
+    () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value)
+      }, delay)
+      return () => {
+        clearTimeout(handler)
+      }
+    },
+    [value, delay],
+  )
+  return debouncedValue
 }

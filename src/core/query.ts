@@ -1,4 +1,6 @@
-import { collection, query, doc, where, orderBy, QueryConstraint } from 'firebase/firestore'
+import {
+  collection, query, doc, where, orderBy, QueryConstraint,
+} from 'firebase/firestore'
 import {
   useFirestoreQueryData,
   useFirestoreDocumentMutation,
@@ -7,8 +9,10 @@ import {
   useFirestoreTransaction,
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
-import { useDeepCompareCallback } from 'use-deep-compare'
+import { useDeepCompareMemo } from 'use-deep-compare'
 import { groupBy } from 'lodash'
+import { useMemo } from 'react'
+
 import firestore, { getDefaultConverter } from './firestore'
 import { hash, isKeywordIncludes } from './util'
 import { useSettingSlice } from './store/settingSlice'
@@ -88,11 +92,6 @@ export const useSongList = (roomId: string) => {
   const songCollectionRef = getSongCollectionRef(roomId)
   const { setting } = useSettingSlice()
 
-  const constraints: QueryConstraint[] = []
-  if (setting.hideBlacklist) {
-    constraints.push(where('isBlacklist', '==', false))
-  }
-
   let groupField = ''
   if (setting.orderBy !== 'RANDOM') {
     switch (setting.groupBy) {
@@ -106,25 +105,32 @@ export const useSongList = (roomId: string) => {
         break
       default:
     }
+  }
 
+  const queryConstraints = useDeepCompareMemo(() => {
+    const constraints: QueryConstraint[] = []
+    if (setting.hideBlacklist) {
+      constraints.push(where('isBlacklist', '==', false))
+    }
     if (groupField) {
       constraints.push(orderBy(groupField))
     }
-
     if (setting.orderBy === 'TITLE') {
       constraints.push(orderBy('title', 'asc'))
     } else if (setting.orderBy === 'RATING') {
       constraints.push(orderBy('rating', 'desc'))
     }
-  }
+    return constraints
+  }, [setting])
 
   const ref = query(
     songCollectionRef,
-    ...constraints,
+    ...queryConstraints,
   )
 
   const {
     data: songList = [],
+    dataUpdatedAt,
     ...result
   } = useFirestoreQueryData(
     [ROOT, roomId, SONG_LIST, setting],
@@ -133,29 +139,30 @@ export const useSongList = (roomId: string) => {
     { enabled: Boolean(roomId) },
   )
 
-  const search = useDeepCompareCallback((keyword = '') => {
-    if (!keyword) return songList
-    return songList.filter(song => (
-      [
-        () => isKeywordIncludes(song.title, keyword),
-        () => isKeywordIncludes(song.singer, keyword),
-        () => isKeywordIncludes(song.origin, keyword),
-        () => isKeywordIncludes(song.number.toString(), keyword),
-        () => song.tagList.some(tag => isKeywordIncludes(`#${tag}`, keyword)),
-      ].some(lazyExp => lazyExp())
-    ))
-  }, [songList])
+  return useMemo(() => {
+    const search = (keyword = '') => {
+      if (!keyword) return songList
+      return songList.filter(song => (
+        [
+          () => isKeywordIncludes(song.title, keyword),
+          () => isKeywordIncludes(song.singer, keyword),
+          () => isKeywordIncludes(song.origin, keyword),
+          () => isKeywordIncludes(song.number.toString(), keyword),
+          () => song.tagList.some(tag => isKeywordIncludes(`#${tag}`, keyword)),
+        ].some(lazyExp => lazyExp())
+      ))
+    }
 
-  const groupByField = useDeepCompareCallback((keyword?: string) => (
-    groupBy(search(keyword), groupField)
-  ), [songList, groupField])
-
-  return {
-    search,
-    groupBy: groupByField,
-    songList,
-    ...result,
-  }
+    return {
+      search,
+      groupByWithFilter (keyword?: string) {
+        return groupBy(search(keyword), groupField)
+      },
+      songList,
+      dataUpdatedAt,
+      ...result,
+    }
+  }, [dataUpdatedAt, groupField])
 }
 
 /** Song 편집(및 신규 등록) */
