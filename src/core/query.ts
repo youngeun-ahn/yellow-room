@@ -91,10 +91,15 @@ export const useRoom = (roomId: string) => {
 export const useSongList = (roomId: string) => {
   const songCollectionRef = getSongCollectionRef(roomId)
   const { setting } = useSettingSlice()
+  const {
+    hideBlacklist,
+    orderBy: optionOrderBy,
+    groupBy: optionGroupBy,
+  } = setting
 
   let groupField = ''
-  if (setting.orderBy !== 'RANDOM') {
-    switch (setting.groupBy) {
+  if (optionOrderBy !== 'RANDOM') {
+    switch (optionGroupBy) {
       case 'NONE':
         break
       case 'ORIGIN':
@@ -109,19 +114,19 @@ export const useSongList = (roomId: string) => {
 
   const queryConstraints = useDeepCompareMemo(() => {
     const constraints: QueryConstraint[] = []
-    if (setting.hideBlacklist) {
+    if (hideBlacklist) {
       constraints.push(where('isBlacklist', '==', false))
     }
     if (groupField) {
       constraints.push(orderBy(groupField))
     }
-    if (setting.orderBy === 'TITLE') {
+    if (optionOrderBy === 'TITLE') {
       constraints.push(orderBy('title', 'asc'))
-    } else if (setting.orderBy === 'RATING') {
+    } else if (optionOrderBy === 'RATING') {
       constraints.push(orderBy('rating', 'desc'))
     }
     return constraints
-  }, [setting])
+  }, [optionOrderBy, hideBlacklist, groupField])
 
   const ref = query(
     songCollectionRef,
@@ -133,7 +138,7 @@ export const useSongList = (roomId: string) => {
     dataUpdatedAt,
     ...result
   } = useFirestoreQueryData(
-    [ROOT, roomId, SONG_LIST, setting],
+    [ROOT, roomId, SONG_LIST, optionGroupBy, optionOrderBy, hideBlacklist],
     ref,
     { subscribe: true },
     { enabled: Boolean(roomId) },
