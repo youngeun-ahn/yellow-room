@@ -1,4 +1,4 @@
-import { EditOutlined, FastForward } from '@mui/icons-material'
+import { EditOutlined } from '@mui/icons-material'
 import { Box, Card, CardContent, CardProps, IconButton, Typography } from '@mui/material'
 import classNames from 'classnames'
 import { useSongDetailContext } from './SongDetail/context'
@@ -6,8 +6,9 @@ import GenderToggleButton from './SongDetail/GenderToggleButton'
 
 interface Props extends CardProps {
   song: Song
+  mock?: boolean
 }
-function SongCard ({ song, className, ...cardProps }: Props) {
+function SongCard ({ song, mock, className, ...cardProps }: Props) {
   const titleLabel = song.singer
     ? `${song.title} (${song.singer})`
     : song.title
@@ -25,6 +26,7 @@ function SongCard ({ song, className, ...cardProps }: Props) {
     >
       <CardContent className="relative !p-8 sm:!p-12">
         <IconButton
+          disabled={mock}
           disableRipple
           size="small" color="secondary"
           className="!absolute top-4 right-4 opacity-50 hover:opacity-100"

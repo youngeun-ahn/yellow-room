@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '.'
 
 const initialState: Setting = {
@@ -41,6 +42,17 @@ const {
 export const useSettingSlice = () => {
   const setting = useAppSelector(_ => _.setting)
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (!setting) {
+      // NOTE: 모종의 이유로 스토어가 없는 경우 초기화
+      dispatch(initSetting(initialState))
+    } else if (!setting.cardViewOptionList) {
+      // NOTE: 추가된 필드라 없을 수 있음.
+      dispatch(setCardViewOptionList(initialState.cardViewOptionList))
+    }
+  }, [])
+
   return {
     setting,
     initSetting (initialSetting?: Setting) {
@@ -60,7 +72,7 @@ export const useSettingSlice = () => {
       dispatch(setOrderBy(orderBy))
     },
     toggleCardViewOption (cardViewOption: CardViewOption, checked: boolean) {
-      const poppedList = setting.cardViewOptionList.filter(_ => _ === cardViewOption)
+      const poppedList = setting.cardViewOptionList.filter(_ => _ !== cardViewOption)
       const nextOptionList = checked
         ? poppedList.concat(cardViewOption)
         : poppedList

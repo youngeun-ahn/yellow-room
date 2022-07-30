@@ -9,6 +9,7 @@ import PWAInstallButton from './PWAInstallButton'
 import DeleteRoomButton from './DeleteRoomButton'
 import CopyRoomLinkButton from './CopyRoomLinkButton'
 import ExitRoomButton from './ExitRoomButton'
+import CardViewSettingButton from './CardViewSettingButton'
 
 function SettingPanel () {
   const {
@@ -86,6 +87,8 @@ function SettingPanel () {
             </FormHelperText>
           )}
         </FormControl>
+        {/* Song Card View Options */}
+        <CardViewSettingButton />
       </Box>
       {/* Actions */}
       <Box className="f-col-8 mb-24">
