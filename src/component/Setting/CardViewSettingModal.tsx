@@ -31,7 +31,12 @@ function CardViewSettingModal () {
   return (
     <>
       <Button
-        variant="outlined" size="large"
+        size="large"
+        className="
+          h-[8rem]
+          !bg-blue-50 !shadow-sm !text-lg
+          !border-dashed !border-[1px] !border-gray-400
+        "
         onClick={() => setOpen(true)}
       >
         노래 카드 보기 설정
