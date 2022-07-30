@@ -8,7 +8,7 @@ import storage from 'redux-persist/lib/storage'
 import settingReducer from './settingSlice'
 
 const reducer = persistReducer(
-  { key: 'stting', version: 1, storage },
+  { key: 'setting', version: 1, storage },
   combineReducers({
     setting: settingReducer,
   }),

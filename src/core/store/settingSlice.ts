@@ -5,6 +5,7 @@ const initialState: Setting = {
   hideBlacklist: false,
   groupBy: 'ORIGIN',
   orderBy: 'TITLE',
+  cardViewOptionList: ['KEY', 'ORIGIN', 'SINGER', 'TAG'],
 }
 
 export const settingSlice = createSlice({
@@ -23,11 +24,18 @@ export const settingSlice = createSlice({
     setOrderBy (state, action: PayloadAction<OrderBy>) {
       state.orderBy = action.payload
     },
+    setCardViewOptionList (state, action: PayloadAction<CardViewOption[]>) {
+      state.cardViewOptionList = action.payload
+    },
   },
 })
 
 const {
-  initSetting, toggleHideBlacklist, setGroupBy, setOrderBy,
+  initSetting,
+  toggleHideBlacklist,
+  setGroupBy,
+  setOrderBy,
+  setCardViewOptionList,
 } = settingSlice.actions
 
 export const useSettingSlice = () => {
@@ -50,6 +58,13 @@ export const useSettingSlice = () => {
     },
     setOrderBy (orderBy: OrderBy) {
       dispatch(setOrderBy(orderBy))
+    },
+    toggleCardViewOption (cardViewOption: CardViewOption, checked: boolean) {
+      const poppedList = setting.cardViewOptionList.filter(_ => _ === cardViewOption)
+      const nextOptionList = checked
+        ? poppedList.concat(cardViewOption)
+        : poppedList
+      dispatch(setCardViewOptionList(nextOptionList))
     },
   }
 }
