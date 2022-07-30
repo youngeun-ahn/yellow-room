@@ -9,7 +9,7 @@ function ExitRoomButton () {
       className="!bg-green-500 !shadow-sm"
       onClick={() => navigate('/', { state: { exit: true } })}
     >
-      로비로 이동
+      로비로 나가기
     </Button>
   )
 }

@@ -1,10 +1,11 @@
 import { useSettingSlice } from '@core/store/settingSlice'
 import { EditOutlined } from '@mui/icons-material'
-import { Box, Button, Card, CardContent, CardProps, IconButton, Rating, Typography } from '@mui/material'
+import { Box, Card, CardContent, CardProps, IconButton, Rating, Typography } from '@mui/material'
 import classNames from 'classnames'
-import { useSongDetailContext } from './SongDetail/context'
-import GenderToggleButton from './SongDetail/GenderToggleButton'
+import { useSongDetailContext } from '../SongDetail/context'
+import GenderToggleButton from '../SongDetail/GenderToggleButton'
 import SongPlayButton from './SongPlayButton'
+import SongTextPreviewModal from './SongTextPreviewModal'
 
 interface Props extends CardProps {
   song: Song
@@ -17,11 +18,11 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
   const isVisible = {
     key: isCardViewVisible('KEY') && song.key !== 0,
     rating: isCardViewVisible('RATING'),
-    origin: isCardViewVisible('ORIGIN') && Boolean(song.origin),
-    singer: isCardViewVisible('SINGER') && Boolean(song.singer),
+    origin: isCardViewVisible('ORIGIN') && song.origin,
+    singer: isCardViewVisible('SINGER') && song.singer,
     tag: isCardViewVisible('TAG') && song.tagList.length > 0,
-    memo: isCardViewVisible('MEMO'),
-    lyric: isCardViewVisible('LYRIC'),
+    memo: isCardViewVisible('MEMO') && song.memo.trim().length > 0,
+    lyric: isCardViewVisible('LYRIC') && song.lyric.trim().length > 0,
     youtube: isCardViewVisible('YOUTUBE') && song.youtube,
   }
 
@@ -34,7 +35,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
       )}
       {...cardProps}
     >
-      <CardContent className="relative !p-8 sm:!p-12">
+      <CardContent className="relative !p-8 sm:!px-12">
         <IconButton
           disabled={mock}
           disableRipple
@@ -93,10 +94,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
             {isVisible.tag && (
               <Box
                 className="flex-1 text-blue-500 text-xs"
-                sx={{
-                  wordBreak: 'break-all',
-                  // lineHeight: 1.5,
-                }}
+                sx={{ wordBreak: 'break-all' }}
               >
                 {song.tagList.map(tag => (
                   <span key={tag} className="mr-4">
@@ -105,22 +103,20 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
                 ))}
               </Box>
             )}
-            <Box className="f-row-2 !flex-nowrap">
+            <Box className="f-row-2 !flex-nowrap ml-auto">
               {isVisible.lyric && (
-                <Button
-                  size="small"
-                  className="!min-w-fit h-[1.2rem]"
-                >
-                  가사
-                </Button>
+                <SongTextPreviewModal
+                  label="가사"
+                  title={song.title}
+                  content={song.lyric}
+                />
               )}
               {isVisible.memo && (
-                <Button
-                  size="small"
-                  className="!min-w-fit h-[1.2rem]"
-                >
-                  메모
-                </Button>
+                <SongTextPreviewModal
+                  label="메모"
+                  title="Memo"
+                  content={song.memo}
+                />
               )}
             </Box>
           </Box>

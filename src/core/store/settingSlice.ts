@@ -6,7 +6,16 @@ const initialState: Setting = {
   hideBlacklist: false,
   groupBy: 'ORIGIN',
   orderBy: 'TITLE',
-  cardViewOptionList: ['KEY', 'ORIGIN', 'SINGER', 'TAG'],
+  cardViewOptionList: [
+    'KEY',
+    'LYRIC',
+    'MEMO',
+    'ORIGIN',
+    'RATING',
+    'SINGER',
+    'TAG',
+    'YOUTUBE',
+  ],
 }
 
 export const settingSlice = createSlice({

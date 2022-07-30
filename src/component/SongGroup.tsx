@@ -3,7 +3,7 @@ import { KeyboardArrowDown } from '@mui/icons-material'
 import { Box, Collapse, Typography } from '@mui/material'
 import classNames from 'classnames'
 import { useMemo, useState } from 'react'
-import SongCard from './SongCard'
+import SongCard from './SongCard/SongCard'
 
 interface SongListProps {
   songList: Song[]

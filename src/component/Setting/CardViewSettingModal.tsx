@@ -1,4 +1,4 @@
-import SongCard from '@component/SongCard'
+import SongCard from '@component/SongCard/SongCard'
 import { useSettingSlice } from '@core/store/settingSlice'
 import {
   Box, Button,
@@ -8,7 +8,7 @@ import {
 import { useState } from 'react'
 import SONG_MOCK from './mock.json'
 
-function CardViewSettingButton () {
+function CardViewSettingModal () {
   type Option = { label: string, option: CardViewOption }
   const OPTIONS: Option[] = [
     { label: '키', option: 'KEY' },
@@ -31,7 +31,7 @@ function CardViewSettingButton () {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="outlined" size="large"
         onClick={() => setOpen(true)}
       >
         노래 카드 보기 설정
@@ -73,4 +73,4 @@ function CardViewSettingButton () {
   )
 }
 
-export default CardViewSettingButton
+export default CardViewSettingModal
