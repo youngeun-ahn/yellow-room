@@ -50,20 +50,16 @@ function CardViewSettingButton () {
             <SongCard song={SONG_MOCK as Song} mock />
           </Box>
           {/* Settings */}
-          <Box className="f-row">
-            {[0, 4].map(groupIdx => (
-              <FormGroup key={groupIdx} className="flex-1">
-                {OPTIONS.slice(groupIdx, groupIdx + 4).map(({ label, option }) => (
-                  <FormControlLabel
-                    label={label}
-                    key={option}
-                    value={option}
-                    checked={setting.cardViewOptionList.includes(option)}
-                    onChange={(_, checked) => toggleCardViewOption(option, checked)}
-                    control={<Checkbox />}
-                  />
-                ))}
-              </FormGroup>
+          <Box className="grid grid-cols-2">
+            {OPTIONS.map(({ label, option }) => (
+              <FormControlLabel
+                label={label}
+                key={option}
+                value={option}
+                checked={setting.cardViewOptionList.includes(option)}
+                onChange={(_, checked) => toggleCardViewOption(option, checked)}
+                control={<Checkbox />}
+              />
             ))}
           </Box>
         </DialogContent>
