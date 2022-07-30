@@ -1,14 +1,13 @@
 import { Man, Woman, Wc } from '@mui/icons-material'
-import { IconButton, SvgIcon } from '@mui/material'
+import { IconButton, IconButtonProps, SvgIcon } from '@mui/material'
 import { useMemo } from 'react'
 
-interface Props {
+interface Props extends Omit<IconButtonProps, 'onChange' | 'onClick'> {
   gender: Gender
   onChange?: (gender: Gender) => void
-  disabled?: boolean
 }
 
-function GenderToggleButton ({ gender, onChange, disabled }: Props) {
+function GenderToggleButton ({ gender, onChange, ...props }: Props) {
   const { icon, color, next } = useMemo(() => {
     switch (gender) {
       case 'MAN':
@@ -40,8 +39,9 @@ function GenderToggleButton ({ gender, onChange, disabled }: Props) {
 
   return (
     <IconButton
-      size="small" disabled={disabled}
+      size="small"
       onClick={() => onChange?.(next)}
+      {...props}
     >
       <SvgIcon component={icon} fontSize="small" sx={{ color }} />
     </IconButton>

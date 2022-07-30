@@ -2,8 +2,8 @@ import SongCard from '@component/SongCard'
 import { useSettingSlice } from '@core/store/settingSlice'
 import {
   Box, Button,
-  Dialog, DialogActions, DialogContent, DialogTitle,
-  FormGroup, FormControlLabel, Checkbox,
+  Dialog, DialogActions, DialogContent,
+  FormControlLabel, Checkbox,
 } from '@mui/material'
 import { useState } from 'react'
 import SONG_MOCK from './mock.json'
@@ -39,16 +39,13 @@ function CardViewSettingButton () {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
-        PaperProps={{ className: '!mx-4' }}
+        PaperProps={{ className: '!mx-4 w-full sm:w-auto' }}
       >
-        <DialogTitle className="!font-bold">
-          노래 카드 보기 설정
-        </DialogTitle>
-        <DialogContent className="f-col-8">
+        <DialogContent className="!py-16 !px-8 !bg-yellow-300">
           {/* Preview */}
-          <Box className="-mx-8">
-            <SongCard song={SONG_MOCK as Song} mock />
-          </Box>
+          <SongCard song={SONG_MOCK as Song} mock />
+        </DialogContent>
+        <DialogContent className="f-col-8 !pb-0">
           {/* Settings */}
           <Box className="grid grid-cols-2">
             {OPTIONS.map(({ label, option }) => (

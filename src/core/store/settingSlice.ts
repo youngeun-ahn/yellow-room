@@ -78,6 +78,9 @@ export const useSettingSlice = () => {
         : poppedList
       dispatch(setCardViewOptionList(nextOptionList))
     },
+    isCardViewVisible (cardViewOption: CardViewOption) {
+      return setting.cardViewOptionList.includes(cardViewOption)
+    },
   }
 }
 
