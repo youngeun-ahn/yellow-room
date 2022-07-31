@@ -15,7 +15,6 @@ jobs:
         run: |
           echo "REACT_APP_FB_API_KEY=$REACT_APP_FB_API_KEY" >> .env
           cat .env
-          cat .env.production
         env:
           REACT_APP_FB_API_KEY: ${{ secrets.REACT_APP_FB_API_KEY }}
       # Build
