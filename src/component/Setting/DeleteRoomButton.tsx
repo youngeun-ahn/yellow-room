@@ -1,3 +1,4 @@
+import { logDeleteRoom, logExitRoom } from '@core/analytics'
 import { useDeleteRoom, useRoom } from '@core/query'
 import { hash } from '@core/util'
 import {
@@ -24,8 +25,10 @@ function DeleteRoomButton () {
 
   const onClickDelete = handleSubmit(() => {
     if (!roomId) return
+    logDeleteRoom()
     deleteRoom({
       onSuccess () {
+        logExitRoom()
         navigate('/', { replace: true, state: { exit: true } })
       },
     })

@@ -20,7 +20,7 @@ function SettingPanel () {
   } = useSettingSlice()
 
   const groupByLabel = {
-    ORIGIN: '원작으로 그룹핑',
+    ORIGIN: '작품으로 그룹핑',
     SINGER: '가수 이름으로 그룹핑',
     NONE: '그룹핑 안함',
   }

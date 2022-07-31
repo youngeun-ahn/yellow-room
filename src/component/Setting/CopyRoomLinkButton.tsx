@@ -1,3 +1,4 @@
+import { logShareRoom } from '@core/analytics'
 import { Check } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import { useState } from 'react'
@@ -9,7 +10,10 @@ function CopyRoomLinkButton () {
   return (
     <CopyToClipboard
       text={location.href}
-      onCopy={setCopiedLink}
+      onCopy={url => {
+        setCopiedLink(url)
+        logShareRoom()
+      }}
     >
       <Button
         variant="contained" size="large"

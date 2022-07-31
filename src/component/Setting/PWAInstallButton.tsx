@@ -1,3 +1,4 @@
+import { logInstallApp } from '@core/analytics'
 import { LoadingButton } from '@mui/lab'
 import { useEffect, useState } from 'react'
 import { usePWAInstall } from 'react-use-pwa-install'
@@ -40,7 +41,11 @@ function PWAInstallButton () {
       loadingPosition="start"
       startIcon={<></>}
       variant="contained" size="large"
-      onClick={install}
+      onClick={() => {
+        install?.()?.then(() => {
+          logInstallApp('PWA', 'Button')
+        })
+      }}
     >
       모바일 App 설치 (PWA)
     </LoadingButton>

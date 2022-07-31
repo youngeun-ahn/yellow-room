@@ -68,7 +68,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
               <Rating value={song.rating} size="small" readOnly />
             )}
           </Box>
-          {/* 제목 & 가수 & 원작 & 유튜브 */}
+          {/* 제목 & 가수 & 작품 & 유튜브 */}
           <Box className="f-row-8 !items-start !flex-nowrap">
             <Box className="f-col-4 self-center">
               {isVisible.origin && (

@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
 import { useEffect, useState } from 'react'
+import { logCreateRoom, logEnterRoom } from '@core/analytics'
 
 interface RoomForm {
   roomName: string
@@ -47,9 +48,12 @@ function Lobby () {
   } = useCreateRoom()
 
   const onClickEnter = handleSubmit(() => {
+    const isPrivate = Boolean(roomPwd)
+    logEnterRoom(isPrivate)
     // 없는 방이면 firebase 문서 생성하고 redirect
     if (!room) {
       createRoom(roomName.trim(), roomPwd)
+      logCreateRoom(isPrivate)
       navigate(`/room/${newRoomId}`, { replace: true })
       return
     }
@@ -73,6 +77,7 @@ function Lobby () {
     return <></>
   }
   if (!isExited && lastRoom) {
+    logEnterRoom(Boolean(lastRoom.pwd))
     return (
       <Navigate to={`/room/${lastEnteredRoom}`} replace />
     )

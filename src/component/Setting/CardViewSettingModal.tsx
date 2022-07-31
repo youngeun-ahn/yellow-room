@@ -13,7 +13,7 @@ function CardViewSettingModal () {
   const OPTIONS: Option[] = [
     { label: '키', option: 'KEY' },
     { label: '선호도', option: 'RATING' },
-    { label: '원작', option: 'ORIGIN' },
+    { label: '작품', option: 'ORIGIN' },
     { label: '가수', option: 'SINGER' },
     { label: '태그 목록', option: 'TAG' },
     { label: '가사', option: 'LYRIC' },

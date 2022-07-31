@@ -167,7 +167,7 @@ function SongForm ({ songForm }: Props) {
         )}
         control={control}
       />
-      {/* 원작 */}
+      {/* 작품 */}
       <Controller
         name="origin"
         render={({ field }) => (

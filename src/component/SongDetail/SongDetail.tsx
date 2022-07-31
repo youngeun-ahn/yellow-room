@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useLayoutEffect, useState } from 'react'
 import { useDeepCompareEffect } from 'use-deep-compare'
+import { logCreateSong, logDeleteSong, logEditSong } from '@core/analytics'
 import Header from './Header'
 import { useSongDetailContext } from './context'
 import SongForm from './SongForm'
@@ -13,7 +14,7 @@ interface Props {
   onClose: () => void
 }
 function SongDetail ({ onClose }: Props) {
-  const { open, song, closeSongDetail } = useSongDetailContext()
+  const { open, song, isNew, closeSongDetail } = useSongDetailContext()
 
   const songForm = useForm<Song>({
     mode: 'all',
@@ -60,20 +61,27 @@ function SongDetail ({ onClose }: Props) {
       ...restForm
     } = form
 
-    editSong({
+    const nextSongForm = {
       title: title.trim(),
       singer: singer.trim(),
       origin: origin.trim(),
       number: Number.parseInt(String(number), 10),
       key: Number.parseInt(String(key), 10),
       ...restForm,
-    }, {
-      onSuccess: closeSongDetail,
-    })
+    }
+
+    editSong(nextSongForm, { onSuccess: closeSongDetail })
+
+    if (isNew) {
+      logCreateSong(nextSongForm)
+    } else {
+      logEditSong(nextSongForm)
+    }
   })
 
   const onDelete = () => {
     if (isLoading) return
+    logDeleteSong()
     deleteSong({ onSuccess: closeSongDetail })
   }
 
