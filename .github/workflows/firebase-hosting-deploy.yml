@@ -8,8 +8,17 @@ jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
+      # CheckOut Branch
       - uses: actions/checkout@v2
+      # Inject API Key to env
+      - name: Inject API Key to .env.production
+        run: |
+          echo "REACT_APP_FB_API_KEY=$FB_API_KEY" >> .env.production
+        env:
+          REACT_APP_FB_API_KEY: ${{ secrets.FB_API_KEY }}
+      # Build
       - run: npm ci && npm run build
+      # Deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

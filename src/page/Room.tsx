@@ -106,7 +106,7 @@ function Room () {
         {isLoading && (
           <Box className="f-row-start-8 sm:!items-stretch sm:min-h-[8rem]">
             {[0, 1, 2].map(_ => (
-              <Skeleton key={_} className="w-full sm:w-[24rem] !h-[8rem] transform" />
+              <Skeleton key={_} className="w-full sm:w-[24rem] !h-[8rem] !transform-none" />
             ))}
           </Box>
         )}

@@ -55,9 +55,8 @@ function CardViewSettingModal () {
           <Box className="grid grid-cols-2">
             {OPTIONS.map(({ label, option }) => (
               <FormControlLabel
-                label={label}
                 key={option}
-                value={option}
+                label={label}
                 checked={setting.cardViewOptionList.includes(option)}
                 onChange={(_, checked) => toggleCardViewOption(option, checked)}
                 control={<Checkbox />}
