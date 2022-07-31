@@ -14,7 +14,7 @@ function App () {
 
   useEffect(() => {
     if (!isInstallReady) return
-    install?.()
+    setTimeout(() => install?.(), 3000)
   }, [isInstallReady])
 
   return (
