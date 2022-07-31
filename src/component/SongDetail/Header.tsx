@@ -63,7 +63,7 @@ function Header ({ onSave, onReset, onDelete, isLoading }: Props) {
           )}
           {/* 저장 */}
           {!isReadonly && (
-            <Tooltip title="Ctrl + Enter">
+            <Tooltip title="Alt + Enter">
               <IconButton
                 onClick={onSave}
                 disabled={isLoading}

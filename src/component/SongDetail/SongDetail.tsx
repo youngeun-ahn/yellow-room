@@ -93,9 +93,9 @@ function SongDetail ({ onClose }: Props) {
           onClose()
         }}
         anchor="bottom"
-        onKeyDown={e => {
-          const isCtrlEnter = e.ctrlKey && ['\n', 'enter', 'Enter'].includes(e.key)
-          if (!isCtrlEnter) return
+        onKeyDownCapture={e => {
+          const isAltEnter = e.altKey && ['\n', 'enter', 'Enter'].includes(e.key)
+          if (!isAltEnter) return
           if (isLoading) return
           onSave()
         }}
