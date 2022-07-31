@@ -10,12 +10,14 @@ jobs:
     steps:
       # CheckOut Branch
       - uses: actions/checkout@v2
-      # Inject API Key to env
-      - name: Inject API Key to .env.production
+      # Inject API Key to .env
+      - name: Inject API Key to .env
         run: |
-          echo "REACT_APP_FB_API_KEY=$FB_API_KEY" >> .env.production
+          echo "REACT_APP_FB_API_KEY=$REACT_APP_FB_API_KEY" >> .env
+          cat .env
+          cat .env.production
         env:
-          REACT_APP_FB_API_KEY: ${{ secrets.FB_API_KEY }}
+          REACT_APP_FB_API_KEY: ${{ secrets.REACT_APP_FB_API_KEY }}
       # Build
       - run: npm ci && npm run build
       # Deploy
