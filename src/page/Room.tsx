@@ -78,6 +78,7 @@ function Room () {
           variant="standard"
           label="Search"
           placeholder="제목, 가수, 원작명, 태그로 검색"
+          inputMode="search"
           fullWidth
           onChange={e => setKeywordDebounced(e.target.value)}
           InputProps={{

@@ -10,6 +10,15 @@ const THEME = createTheme({
             color: 'black !important',
             WebkitTextFillColor: 'black',
           },
+          'input::-webkit-outer-spin-button, input::-webkit-inner-spin-button': {
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            margin: 0,
+          },
+          'input[type=number]': {
+            appearance: 'textfield',
+            MozAppearance: 'textfield',
+          },
         },
       },
     },

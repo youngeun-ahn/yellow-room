@@ -1,11 +1,12 @@
 import { useSongList } from '@core/query'
 import { toTagList, uniqSort } from '@core/util'
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
-  Autocomplete, TextField, Checkbox, Rating,
+  Autocomplete, TextField, Checkbox, Rating, IconButton,
 } from '@mui/material'
-import { KeyboardEvent } from 'react'
+import { KeyboardEvent, useMemo } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useSongDetailContext } from './context'
@@ -41,13 +42,24 @@ function SongForm ({ songForm }: Props) {
     })
   }
 
+  const songKey = useMemo(
+    () => Number.parseInt(String(watch('key')), 10),
+    [watch('key')],
+  )
+  const setSongKey = (nextSongKey: number) => {
+    trigger('key')
+    setValue('key', nextSongKey)
+  }
+
   return (
     <Box className="w-[40rem] max-w-full mx-auto f-col-12 !flex-nowrap flex-1">
       {/* 번호, 키 */}
       <Box className="f-row-start-12 !items-start">
         <TextField
           label="번호"
-          variant="standard" type="number" required
+          variant="standard"
+          type="number" inputMode="numeric" pattern="[\-|0-9]*"
+          required
           className="w-[6.4rem]"
           {...register('number', {
             required: '노래 번호는 반드시 입력해야 합니다.',
@@ -70,23 +82,44 @@ function SongForm ({ songForm }: Props) {
           )}
           disabled={isReadonly}
         />
-        <TextField
-          label="키"
-          variant="standard" type="number"
-          className="w-[6.4rem]"
-          {...register('key')}
-          onKeyDown={onNextFocus('key', 'title')}
-          InputProps={{
-            endAdornment: (
-              <GenderToggleButton
-                gender={watch('gender')}
-                onChange={gender => setValue('gender', gender)}
-                disabled={isReadonly}
-              />
-            ),
-          }}
-          disabled={isReadonly}
-        />
+        <Box className="f-row !items-end">
+          {/* Decrease Key */}
+          <IconButton
+            size="small"
+            disabled={isReadonly}
+            tabIndex={-1}
+            onClick={() => setSongKey(songKey - 1)}
+          >
+            <ChevronLeft fontSize="small" />
+          </IconButton>
+          <TextField
+            label="키"
+            variant="standard"
+            type="number" inputMode="numeric" pattern="[\-|0-9]*"
+            className="w-[4rem]"
+            {...register('key')}
+            onKeyDown={onNextFocus('key', 'title')}
+            InputProps={{
+              endAdornment: (
+                <GenderToggleButton
+                  gender={watch('gender')}
+                  onChange={gender => setValue('gender', gender)}
+                  disabled={isReadonly}
+                />
+              ),
+            }}
+            disabled={isReadonly}
+          />
+          {/* Increase Key */}
+          <IconButton
+            size="small"
+            disabled={isReadonly}
+            tabIndex={-1}
+            onClick={() => setSongKey(songKey + 1)}
+          >
+            <ChevronRight fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
       {/* 노래 제목 */}
       <TextField
