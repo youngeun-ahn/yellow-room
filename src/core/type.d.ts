@@ -40,5 +40,5 @@ declare interface Setting {
   hideBlacklist: boolean
   orderBy: OrderBy
   groupBy: GroupBy
-  cardViewOptionList: CardViewOption[],
+  cardViewOptionList: CardViewOption[]
 }

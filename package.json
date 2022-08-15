@@ -38,7 +38,6 @@
     "eslint-plugin-react-hooks": "^4.5.0",
     "firebase": "^9.8.3",
     "get-video-id": "^3.6.4",
-    "hangul-js": "^0.2.6",
     "immer": "^9.0.15",
     "lodash": "^4.17.21",
     "material-ui-popup-state": "^4.0.1",

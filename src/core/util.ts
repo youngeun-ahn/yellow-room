@@ -1,6 +1,5 @@
 import { sortedUniq } from 'lodash'
 import sha1 from 'sha1'
-import Hangul from 'hangul-js'
 
 export const isKeywordIncludes = (
   target: string,
@@ -10,20 +9,7 @@ export const isKeywordIncludes = (
   const targetStr = (ignoreCases ? target.toLowerCase() : target).trim()
   const searchStr = (ignoreCases ? search.toLowerCase() : search).trim()
   const searchChunkList = searchStr.split(/\s+/g)
-  return searchChunkList.some(chunk => {
-    const isIncluded = targetStr.includes(chunk)
-    if (isIncluded) return true
-
-    const isHangulSearched = Hangul.search(targetStr, chunk) >= 0
-    if (isHangulSearched) return true
-
-    /* 초성 검색 */
-    return Hangul
-      .d(targetStr, true)
-      .map(_ => _[0])
-      .join('')
-      .includes(chunk)
-  })
+  return searchChunkList.some(_ => targetStr.includes(_))
 }
 
 export function uniqSort (list: string[]) {
