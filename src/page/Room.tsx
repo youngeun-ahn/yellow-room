@@ -4,7 +4,7 @@ import { Box, Fab, Skeleton, TextField } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
-import Header from '@component/Header'
+import RoomHeader from '@component/RoomHeader'
 import SongDetailProvider, { useSongDetailContext } from '@component/SongDetail/context'
 import SongDetailDrawer from '@component/SongDetail/SongDetail'
 import useLocalStorage from 'use-local-storage'
@@ -64,7 +64,10 @@ function Room () {
   }
   return (
     <>
-      <Header title={room?.name} />
+      <RoomHeader
+        roomName={room?.name}
+        roomId={room?.id}
+      />
       <Fab
         color="primary"
         className="!fixed right-16 bottom-16"
