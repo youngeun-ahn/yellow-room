@@ -102,8 +102,8 @@ export const useSongList = (roomId: string) => {
     switch (optionGroupBy) {
       case 'NONE':
         break
-      case 'ORIGIN':
-        groupField = 'origin'
+      case 'GROUP':
+        groupField = 'group'
         break
       case 'SINGER':
         groupField = 'singer'
@@ -151,7 +151,7 @@ export const useSongList = (roomId: string) => {
         [
           () => isKeywordIncludes(song.title, keyword),
           () => isKeywordIncludes(song.singer, keyword),
-          () => isKeywordIncludes(song.origin, keyword),
+          () => isKeywordIncludes(song.group, keyword),
           () => isKeywordIncludes(song.number.toString(), keyword),
           () => song.tagList.some(tag => isKeywordIncludes(`#${tag}`, keyword)),
         ].some(lazyExp => lazyExp())

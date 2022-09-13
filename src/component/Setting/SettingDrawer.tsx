@@ -20,13 +20,12 @@ function SettingPanel () {
   } = useSettingSlice()
 
   const groupByLabel = {
-    ORIGIN: '작품으로 그룹핑',
+    GROUP: '설정한 그룹으로 그룹핑',
     SINGER: '가수 이름으로 그룹핑',
-    NONE: '그룹핑 안함',
+    NONE: '그룹핑하지 않음',
   }
 
   const orderByLabel = {
-    GROUP: '그룹명으로 정렬',
     TITLE: '노래 제목으로 정렬',
     RATING: '선호도 순으로 정렬',
     RANDOM: '무작위 순서로 정렬',
@@ -65,6 +64,12 @@ function SettingPanel () {
               <MenuItem key={value} value={value}>{label}</MenuItem>
             ))}
           </Select>
+          {isShuffle && (
+            <FormHelperText className="!mx-4">
+              <Info fontSize="small" />
+              무작위 순서로 정렬하는 경우에는 그룹핑할 수 없습니다.
+            </FormHelperText>
+          )}
         </FormControl>
         {/* Order By */}
         <FormControl variant="outlined">
@@ -80,12 +85,6 @@ function SettingPanel () {
               <MenuItem key={value} value={value}>{label}</MenuItem>
             ))}
           </Select>
-          {isShuffle && (
-            <FormHelperText>
-              <Info fontSize="small" />
-              정렬 기준이 무작위 순서인 경우 그룹핑할 수 없습니다.
-            </FormHelperText>
-          )}
         </FormControl>
         {/* Song Card View Options */}
         <CardViewSettingModal />

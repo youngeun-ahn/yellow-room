@@ -29,7 +29,7 @@ function SongDetail ({ onClose }: Props) {
       gender: 'NONE',
       title: '',
       singer: '',
-      origin: '',
+      group: '',
       rating: 0,
       isBlacklist: false,
       tagList: [],
@@ -56,7 +56,7 @@ function SongDetail ({ onClose }: Props) {
   const onSave = handleSubmit(form => {
     if (isLoading) return
     const {
-      title, singer, origin,
+      title, singer, group,
       number, key,
       ...restForm
     } = form
@@ -64,7 +64,7 @@ function SongDetail ({ onClose }: Props) {
     const nextSongForm = {
       title: title.trim(),
       singer: singer.trim(),
-      origin: origin.trim(),
+      group: group.trim(),
       number: Number.parseInt(String(number), 10),
       key: Number.parseInt(String(key), 10),
       ...restForm,

@@ -1,10 +1,10 @@
 import { useSongList } from '@core/query'
 import { toTagList, uniqSort } from '@core/util'
-import { ChevronLeft, ChevronRight } from '@mui/icons-material'
+import { ChevronLeft, ChevronRight, Info } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
-  Autocomplete, TextField, Checkbox, Rating, IconButton,
+  Autocomplete, TextField, Checkbox, Rating, IconButton, FormHelperText,
 } from '@mui/material'
 import { KeyboardEvent, useMemo } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
@@ -31,7 +31,7 @@ function SongForm ({ songForm }: Props) {
   const { id: roomId = '' } = useParams()
   const { songList } = useSongList(roomId)
   const singerList = uniqSort(songList.map(_ => _.singer))
-  const originList = uniqSort(songList.map(_ => _.origin))
+  const groupList = uniqSort(songList.map(_ => _.group))
   const tagList = uniqSort(songList.flatMap(_ => _.tagList))
 
   const onNextFocus = (curr: keyof Song, next: keyof Song) => (e: KeyboardEvent) => {
@@ -145,7 +145,7 @@ function SongForm ({ songForm }: Props) {
             options={singerList}
             value={field.value}
             onChange={(_, nextSinger) => setValue('singer', nextSinger ?? '')}
-            onKeyDown={onNextFocus('singer', 'origin')}
+            onKeyDown={onNextFocus('singer', 'group')}
             renderInput={({ InputProps, inputProps, ...params }) => (
               <TextField
                 name="singer"
@@ -167,22 +167,22 @@ function SongForm ({ songForm }: Props) {
         )}
         control={control}
       />
-      {/* 작품 */}
+      {/* 그룹 */}
       <Controller
-        name="origin"
+        name="group"
         render={({ field }) => (
           <Autocomplete
-            id="select-origin"
+            id="select-group"
             freeSolo autoSelect
             clearOnEscape clearOnBlur
-            options={originList}
+            options={groupList}
             value={field.value}
-            onChange={(_, nextOrigin) => setValue('origin', nextOrigin ?? '')}
-            onKeyDown={onNextFocus('origin', 'tagList')}
+            onChange={(_, nextGroup) => setValue('group', nextGroup ?? '')}
+            onKeyDown={onNextFocus('group', 'tagList')}
             renderInput={({ InputProps, inputProps, ...params }) => (
               <TextField
                 {...params}
-                label="작품 (영화, 드라마, 게임 등)"
+                label="그룹"
                 variant="standard"
                 InputProps={{
                   ...InputProps,
@@ -192,6 +192,12 @@ function SongForm ({ songForm }: Props) {
                   },
                 }}
                 inputRef={field.ref}
+                helperText={(
+                  <FormHelperText className="!f-row-start-2">
+                    <Info fontSize="small" />
+                    그룹을 설정하여 노래 목록에서 그룹으로 묶을 수 있습니다.
+                  </FormHelperText>
+                )}
               />
             )}
             disabled={isReadonly}

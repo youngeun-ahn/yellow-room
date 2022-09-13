@@ -4,13 +4,13 @@ import { useAppDispatch, useAppSelector } from '.'
 
 const initialState: Setting = {
   hideBlacklist: false,
-  groupBy: 'ORIGIN',
+  groupBy: 'GROUP',
   orderBy: 'TITLE',
   cardViewOptionList: [
     'KEY',
     'LYRIC',
     'MEMO',
-    'ORIGIN',
+    'GROUP',
     'RATING',
     'SINGER',
     'TAG',

@@ -26,7 +26,7 @@ const THEME = createTheme({
       styleOverrides: {
         root: {
           'display': 'flex',
-          'alignItems': 'center',
+          'alignItems': 'start',
           'gap': '0.2rem',
           'marginTop': '0.4rem',
           '& > svg': {

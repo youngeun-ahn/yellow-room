@@ -32,7 +32,7 @@ const getFilledSongField = (song: Song) => [
   song.key || 'Key',
   song.gender || 'Gender',
   song.singer || 'Singer',
-  song.origin || 'Origin',
+  song.group || 'Group',
   song.tagList.length || 'Tags',
   song.rating || 'Rating',
   song.isBlacklist || 'Blacklist',

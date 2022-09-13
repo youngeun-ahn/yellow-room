@@ -18,7 +18,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
   const isVisible = {
     key: isCardViewVisible('KEY') && song.key !== 0,
     rating: isCardViewVisible('RATING'),
-    origin: isCardViewVisible('ORIGIN') && song.origin,
+    group: isCardViewVisible('GROUP') && song.group,
     singer: isCardViewVisible('SINGER') && song.singer,
     tag: isCardViewVisible('TAG') && song.tagList.length > 0,
     memo: isCardViewVisible('MEMO') && song.memo.trim().length > 0,
@@ -68,12 +68,12 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
               <Rating value={song.rating} size="small" readOnly />
             )}
           </Box>
-          {/* 제목 & 가수 & 작품 & 유튜브 */}
+          {/* 제목 & 가수 & 그룹 & 유튜브 */}
           <Box className="f-row-8 !items-start !flex-nowrap">
             <Box className="f-col-4 self-center">
-              {isVisible.origin && (
+              {isVisible.group && (
                 <Box className="text-xs font-bold">
-                  {song.origin}
+                  {song.group}
                 </Box>
               )}
               <Box>
