@@ -71,6 +71,10 @@ function Room () {
     return () => scrollBodyRef.current?.removeEventListener('scroll', onScroll)
   }, [scrollBodyRef.current])
 
+  useEffect(() => {
+    window.dispatchEvent(new Event('rerender-card'))
+  }, [keyword])
+
   if (!roomId) {
     return <Navigate to="/" />
   }
