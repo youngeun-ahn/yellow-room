@@ -29,7 +29,7 @@ function Room () {
       setLastEnteredRoom(room.id)
       return
     }
-    navigate('/', { state: { exit: true, replace: true } })
+    navigate('/', { state: { exit: true }, replace: true })
   }, [isRoomFetched, Boolean(room)])
 
   /* Lobby 에서 방 이름 자동 완성을 위해 입장한 방 이름 목록 기억 */
