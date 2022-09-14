@@ -5,6 +5,7 @@ import {
 } from '@mui/material'
 import { Info, Settings } from '@mui/icons-material'
 import { useSettingSlice } from '@core/store/settingSlice'
+import { useDeepCompareEffect } from 'use-deep-compare'
 import PWAInstallButton from './PWAInstallButton'
 import DeleteRoomButton from './DeleteRoomButton'
 import CopyRoomLinkButton from './CopyRoomLinkButton'
@@ -32,6 +33,10 @@ function SettingPanel () {
   }
 
   const isShuffle = setting.orderBy === 'RANDOM'
+
+  useDeepCompareEffect(() => {
+    window.dispatchEvent(new Event('rerender-card'))
+  }, [setting])
 
   return (
     <Box className="f-col-8 w-[32rem] max-w-full h-full px-12 pt-[4.8rem] sm:pt-[5.4rem] pb-24 bg-yellow-50">

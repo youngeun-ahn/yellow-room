@@ -1,7 +1,7 @@
 import { useRoom, useSongList } from '@core/query'
 import { Add, Search } from '@mui/icons-material'
 import { Box, Fab, Skeleton, TextField } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import SongGroup from '@component/SongGroup'
 import RoomHeader from '@component/RoomHeader'
@@ -59,6 +59,18 @@ function Room () {
     [dataUpdatedAt, keyword],
   )
 
+  const scrollBodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!scrollBodyRef.current) return undefined
+    const onScroll = debounce(() => {
+      window.dispatchEvent(new Event('rerender-card'))
+    }, 200)
+
+    scrollBodyRef.current.addEventListener('scroll', onScroll)
+    return () => scrollBodyRef.current?.removeEventListener('scroll', onScroll)
+  }, [scrollBodyRef.current])
+
   if (!roomId) {
     return <Navigate to="/" />
   }
@@ -90,7 +102,10 @@ function Room () {
         />
         {/* Song Groups */}
         {isSuccess && hasSong && (
-          <Box className="f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8">
+          <Box
+            ref={scrollBodyRef}
+            className="f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8"
+          >
             {songGroupEntries.map(([groupName, songList]) => (
               <SongGroup
                 key={groupName}
