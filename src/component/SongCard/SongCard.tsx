@@ -2,6 +2,7 @@ import { useSettingSlice } from '@core/store/settingSlice'
 import { EditOutlined } from '@mui/icons-material'
 import { Box, Card, CardContent, CardProps, IconButton, Rating, Typography } from '@mui/material'
 import classNames from 'classnames'
+import { useDeepCompareMemo } from 'use-deep-compare'
 import { useSongDetailContext } from '../SongDetail/context'
 import GenderToggleButton from '../SongDetail/GenderToggleButton'
 import SongPlayButton from './SongPlayButton'
@@ -15,7 +16,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
   const { openSongDetail } = useSongDetailContext()
   const { isCardViewVisible } = useSettingSlice()
 
-  const isVisible = {
+  const isVisible = useDeepCompareMemo(() => ({
     key: isCardViewVisible('KEY') && song.key !== 0,
     rating: isCardViewVisible('RATING'),
     group: isCardViewVisible('GROUP') && song.group,
@@ -24,7 +25,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
     memo: isCardViewVisible('MEMO') && song.memo.trim().length > 0,
     lyric: isCardViewVisible('LYRIC') && song.lyric.trim().length > 0,
     youtube: isCardViewVisible('YOUTUBE') && song.youtube,
-  }
+  }), [isCardViewVisible, song])
 
   return (
     <Card

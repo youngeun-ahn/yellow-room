@@ -20,7 +20,7 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
     if (isOpen) {
       navigate('', { state: { drawer: 'setting' } })
     } else {
-      navigate('', { state: { replace: true } })
+      navigate('', { replace: true })
     }
   }
 
@@ -45,7 +45,11 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
                     text={location.href}
                     onCopy={logShareRoom}
                   >
-                    <IconButton className="opacity-30 hover:opacity-100 !ml-2">
+                    <IconButton
+                      className="opacity-30 hover:opacity-100 !ml-2"
+                      disableRipple
+                      disableFocusRipple
+                    >
                       <ContentCopy htmlColor="white" />
                     </IconButton>
                   </CopyToClipboard>

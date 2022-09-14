@@ -102,12 +102,16 @@ function SettingPanel () {
 
 interface Props {
   open: boolean
-  toggle: (open?: boolean) => void
+  toggle: (open: boolean) => void
 }
 function SettingDrawer ({ open, toggle }: Props) {
   return (
     <>
-      <IconButton onClick={() => toggle()}>
+      <IconButton
+        onClick={() => toggle(!open)}
+        disableRipple
+        disableFocusRipple
+      >
         <Settings htmlColor="white" />
       </IconButton>
       <Drawer
