@@ -11,6 +11,7 @@ import DeleteRoomButton from './DeleteRoomButton'
 import CopyRoomLinkButton from './CopyRoomLinkButton'
 import ExitRoomButton from './ExitRoomButton'
 import CardViewSettingModal from './CardViewSettingModal'
+import SendCoffeeButton from './SendCoffeeButton'
 
 function SettingPanel () {
   const {
@@ -99,6 +100,7 @@ function SettingPanel () {
         <CopyRoomLinkButton />
         <ExitRoomButton />
         <DeleteRoomButton />
+        <SendCoffeeButton />
         <PWAInstallButton />
       </Box>
     </Box>
