@@ -47,6 +47,7 @@ function Room () {
     isSuccess,
     isError,
     dataUpdatedAt,
+    songList,
   } = useSongList(roomId)
 
   const hasSong = useMemo(
@@ -59,13 +60,15 @@ function Room () {
     [dataUpdatedAt, keyword],
   )
 
+  const cntSearched = songGroupEntries.flatMap(_ => _[1]).length
+
   const scrollBodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!scrollBodyRef.current) return undefined
     const onScroll = debounce(() => {
       window.dispatchEvent(new Event('rerender-card'))
-    }, 200)
+    }, 100)
 
     scrollBodyRef.current.addEventListener('scroll', onScroll)
     return () => scrollBodyRef.current?.removeEventListener('scroll', onScroll)
@@ -91,12 +94,11 @@ function Room () {
       >
         <Add fontSize="large" />
       </Fab>
-      <Box className="f-col-16 w-full h-full pt-[4.2rem] sm:pt-[5.4rem]">
+      <Box className="f-col-8 w-full h-full pt-[4.2rem] sm:pt-[5.4rem]">
         {/* Search */}
         <TextField
           variant="standard"
-          label="Search"
-          placeholder="제목, 가수, 작품명, 태그로 검색"
+          label="제목, 가수, 작품명, 태그로 검색"
           inputMode="search"
           fullWidth
           onChange={e => setKeywordDebounced(e.target.value)}
@@ -104,17 +106,26 @@ function Room () {
             endAdornment: <Search color="action" />,
           }}
         />
+        <Box
+          className="font-bold text-xs text-right"
+        >
+          {keyword.trim() ? (
+            `전체 ${songList.length}곡 중 ${cntSearched}곡 검색됨`
+          ) : (
+            `전체 ${songList.length}곡`
+          )}
+        </Box>
         {/* Song Groups */}
         {isSuccess && hasSong && (
           <Box
             ref={scrollBodyRef}
             className="f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8"
           >
-            {songGroupEntries.map(([groupName, songList]) => (
+            {songGroupEntries.map(([groupName, groupSongList]) => (
               <SongGroup
                 key={groupName}
                 title={groupName}
-                songList={songList}
+                songList={groupSongList}
               />
             ))}
           </Box>

@@ -50,9 +50,14 @@ function SongGroup ({ title, songList }: Props) {
         className="f-row px-8 py-4 sm:px-12 sm:py-8 -mb-4 z-10 sticky top-0 bg-yellow-200 cursor-pointer"
         onClick={() => setOpen(!open)}
       >
-        <Typography variant="subtitle1" fontWeight="bold">
-          {title || '그룹 없음'}
-        </Typography>
+        <Box className="f-row-2 items-end">
+          <Typography variant="subtitle1" fontWeight="bold">
+            {title || '그룹 없음'}
+          </Typography>
+          <Typography variant="subtitle2">
+            {`(${songList.length})`}
+          </Typography>
+        </Box>
         <KeyboardArrowDown
           className={classNames(
             'opacity-70 rotate-0',

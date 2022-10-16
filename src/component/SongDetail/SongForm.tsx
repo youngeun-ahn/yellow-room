@@ -243,6 +243,7 @@ function SongForm ({ songForm }: Props) {
                 size="large"
                 value={field.value}
                 readOnly={isReadonly}
+                precision={0.5}
                 onChange={(_, nextRating) => setValue('rating', nextRating ?? 0)}
                 onKeyDown={onNextFocus('rating', 'isBlacklist')}
               />

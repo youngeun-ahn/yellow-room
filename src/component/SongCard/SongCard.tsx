@@ -88,7 +88,11 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
                 </Box>
               )}
               {isVisible.rating && (
-                <Rating value={song.rating} size="small" readOnly />
+                <Rating
+                  size="small" readOnly
+                  value={song.rating}
+                  precision={0.5}
+                />
               )}
             </Box>
             {/* 제목 & 가수 & 그룹 & 유튜브 */}
