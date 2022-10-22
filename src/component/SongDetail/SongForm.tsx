@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Info } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
-  Autocomplete, TextField, Checkbox, Rating, IconButton, FormHelperText,
+  Autocomplete, TextField, Checkbox, IconButton, FormHelperText,
 } from '@mui/material'
 import { KeyboardEvent, useMemo } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom'
 import { useSongDetailContext } from './context'
 import EmbedYouTube from './EmbedYouTube'
 import GenderToggleButton from './GenderToggleButton'
+import RatingInput from './RatingInput'
 
 interface Props {
   songForm: UseFormReturn<Song>
@@ -239,11 +240,9 @@ function SongForm ({ songForm }: Props) {
           <Controller
             name="rating"
             render={({ field }) => (
-              <Rating
-                size="large"
+              <RatingInput
                 value={field.value}
                 readOnly={isReadonly}
-                precision={0.5}
                 onChange={(_, nextRating) => setValue('rating', nextRating ?? 0)}
                 onKeyDown={onNextFocus('rating', 'isBlacklist')}
               />
