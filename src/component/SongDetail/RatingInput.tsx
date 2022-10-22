@@ -1,4 +1,5 @@
 import { Rating, RatingProps, useEventCallback } from '@mui/material'
+import { clamp } from 'lodash'
 import { forwardRef, Ref } from 'react'
 
 function RatingInput (
@@ -12,14 +13,15 @@ function RatingInput (
 
     const diff = e.touches[0].clientX - left
     const rating = Math.round((diff / unit) * 2) / 2 - 0.5
-    onChange?.(e, rating)
+
+    onChange?.(e, clamp(rating, 0, 5))
   })
 
   return (
     <Rating
+      ref={ref}
       size="large"
       precision={0.5}
-      ref={ref}
       value={value}
       onTouchMove={onTouchMove}
       onChange={onChange}
