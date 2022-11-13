@@ -4,6 +4,7 @@ import { Box, Card, CardContent, CardProps, IconButton, Rating, Typography } fro
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { useDeepCompareMemo } from 'use-deep-compare'
+import { useDebounce } from 'usehooks-ts'
 import { useSongDetailContext } from '../SongDetail/context'
 import GenderToggleButton from '../SongDetail/GenderToggleButton'
 import SongPlayButton from './SongPlayButton'
@@ -33,7 +34,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
   /* 일정 스크롤 영역 바깥의 카드는 컨텐츠 렌더링 X */
   const cardRef = useRef<HTMLDivElement>(null)
   const [scrollY, setScrollY] = useState<number>(Infinity)
-  const isInRenderArea = scrollY > -640 && scrollY < 2560
+  const isInRenderArea = useDebounce(scrollY > -640 && scrollY < 2560, 100)
 
   useEffect(() => {
     if (!cardRef.current) return undefined
@@ -150,8 +151,9 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
           </Box>
         </CardContent>
       ) : (
-        <CardContent className="h-[5.4rem] f-row items-center font-bold">
-          {song.title}
+        <CardContent className="h-[5.4rem] f-col-8 justify-around font-bold">
+          <span>{song.number}</span>
+          <span>{song.title}</span>
         </CardContent>
       )}
     </Card>

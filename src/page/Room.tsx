@@ -68,7 +68,7 @@ function Room () {
     if (!scrollBodyRef.current) return undefined
     const onScroll = debounce(() => {
       window.dispatchEvent(new Event('rerender-card'))
-    }, 100)
+    }, 50)
 
     scrollBodyRef.current.addEventListener('scroll', onScroll)
     return () => scrollBodyRef.current?.removeEventListener('scroll', onScroll)
