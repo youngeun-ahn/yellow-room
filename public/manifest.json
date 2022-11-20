@@ -1,6 +1,6 @@
 {
-  "short_name": "Yellow Room",
   "name": "Yellow Room",
+  "short_name": "노란 방",
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,6 +11,11 @@
       "src": "logo192.png",
       "type": "image/png",
       "sizes": "192x192"
+    },
+    {
+      "src": "logo384.png",
+      "type": "image/png",
+      "sizes": "384x384"
     },
     {
       "src": "logo512.png",
@@ -27,5 +32,6 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#FBDF63",
-  "background_color": "#FBDF63"
+  "background_color": "#FBDF63",
+  "orientation": "portrait"
 }
