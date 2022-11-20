@@ -12,6 +12,10 @@
     ],
     "rewrites": [
       {
+        "source": "/manifest.json",
+        "destination": "/static/manifest.json"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
