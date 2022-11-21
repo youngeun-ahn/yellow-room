@@ -1,5 +1,6 @@
 {
-  "name": "Yellow Room",
+  "name": "노란 방",
+  "lang": "ko",
   "short_name": "노란 방",
   "icons": [
     {
@@ -23,9 +24,14 @@
       "sizes": "512x512"
     },
     {
-      "src": "logo192.png",
+      "src": "icon512.png",
       "type": "image/png",
-      "sizes": "192x192",
+      "sizes": "512x512"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
       "purpose": "any maskable"
     }
   ],
