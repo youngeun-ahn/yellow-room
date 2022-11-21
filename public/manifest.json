@@ -32,12 +32,25 @@
       "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#FBDF63",
   "background_color": "#FBDF63",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "description": "당신의 노래방 애창곡 목록",
+  "dir": "auto",
+  "categories": [
+    "lifestyle",
+    "music",
+    "utilities"
+  ]
 }
