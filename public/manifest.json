@@ -10,11 +10,11 @@
     },
     {
       "src": "logo.png",
-      "sizes": "512x512"
+      "sizes": "512x512 64x64"
     },
     {
       "src": "logo-maskable.png",
-      "sizes": "512x512",
+      "sizes": "512x512 384x384",
       "purpose": "maskable"
     }
   ],
