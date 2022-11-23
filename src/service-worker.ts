@@ -48,6 +48,11 @@ registerRoute(
       return false
     }
 
+    // skip html
+    if (url.pathname.endsWith('.html')) {
+      return false
+    }
+
     // Return true to signal that we want to use the handler.
     return true
   },
