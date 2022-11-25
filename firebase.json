@@ -12,7 +12,7 @@
     ],
     "rewrites": [
       {
-        "source": "**/!(manifest.json|privacy.html)*",
+        "source": "**/!(*.json|*.html)*",
         "destination": "/index.html"
       }
     ],
