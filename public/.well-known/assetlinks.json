@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.web.frebern_yellow_room.twa",
+      "sha256_cert_fingerprints": [
+        "BC:62:E2:CA:77:CB:B0:CE:BC:C4:EF:BB:09:54:C2:96:BC:05:86:F1:7D:11:37:0F:26:C5:BA:08:C4:FE:08:CB"
+      ]
+    }
+  }
+]
