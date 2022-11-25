@@ -140,7 +140,7 @@ export const useSongList = (roomId: string) => {
   } = useFirestoreQueryData(
     [ROOT, roomId, SONG_LIST, optionGroupBy, optionOrderBy, hideBlacklist],
     ref,
-    { subscribe: true },
+    { subscribe: false },
     { enabled: Boolean(roomId) },
   )
 
@@ -174,7 +174,15 @@ export const useSongList = (roomId: string) => {
 export const useEditSong = (roomId: string, songId?: string) => {
   const songDocId = songId ?? nanoid(5)
   const songDocRef = getSongDocRef(roomId, songDocId)
-  const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef, { merge: true })
+
+  const {
+    refetch: refetchSongList,
+  } = useSongList(roomId)
+  const { mutate, ...result } = useFirestoreDocumentMutation(songDocRef, { merge: true }, {
+    onSuccess () {
+      refetchSongList()
+    },
+  })
 
   return {
     ...result,

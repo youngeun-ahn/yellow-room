@@ -52,7 +52,7 @@ function Room () {
 
   const hasSong = useMemo(
     () => isSuccess && search(keyword).length > 0,
-    [isSuccess, keyword],
+    [isSuccess, keyword, songList.length],
   )
 
   const songGroupEntries = useMemo(
