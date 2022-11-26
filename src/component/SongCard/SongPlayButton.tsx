@@ -2,15 +2,15 @@ import {
   Pause,
   YouTube as YouTubeIcon,
 } from '@mui/icons-material'
-import { Box, CircularProgress, IconButton } from '@mui/material'
+import { Box, BoxProps, CircularProgress, IconButton } from '@mui/material'
 import getVideoId from 'get-video-id'
 import { useState } from 'react'
 import YouTube, { YouTubeEvent } from 'react-youtube'
 
-interface Props {
+interface Props extends BoxProps {
   youtube: string
 }
-function SongPlayButton ({ youtube }: Props) {
+function SongPlayButton ({ youtube, ...boxProps }: Props) {
   const {
     id = '',
     service = '',
@@ -36,10 +36,11 @@ function SongPlayButton ({ youtube }: Props) {
 
   if (!play) {
     return (
-      <Box className="f-center w-[2.4rem] h-[2.4rem]">
+      <Box {...boxProps}>
         <IconButton
-          className="max-w-[4rem]"
+          // className="max-w-[4rem]"
           onClick={() => setPlay(true)}
+          disableRipple
         >
           <YouTubeIcon fontSize="large" htmlColor="red" />
         </IconButton>
@@ -49,7 +50,7 @@ function SongPlayButton ({ youtube }: Props) {
 
   return (
     <>
-      <Box className="f-center w-[2.4rem] h-[2.4rem]">
+      <Box {...boxProps}>
         <IconButton onClick={onClickControl}>
           {ready && (paused ? (
             <YouTubeIcon fontSize="large" htmlColor="red" />
@@ -57,7 +58,7 @@ function SongPlayButton ({ youtube }: Props) {
             <Pause fontSize="large" />
           ))}
           {!ready && (
-            <CircularProgress size="1.6rem" />
+            <CircularProgress size="2rem" />
           )}
         </IconButton>
       </Box>

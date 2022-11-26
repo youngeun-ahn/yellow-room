@@ -59,7 +59,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
       {...cardProps}
     >
       {isInRenderArea ? (
-        <CardContent className="relative !p-8 sm:!px-12">
+        <CardContent className="relative !p-8 sm:!px-12 h-full">
           <IconButton
             disabled={mock}
             disableRipple
@@ -69,7 +69,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
           >
             <EditOutlined fontSize="small" />
           </IconButton>
-          <Box className="f-col-4">
+          <Box className="f-col-4 h-full">
             {/* 번호 & 키 & 선호도 */}
             <Box className="f-row-start-4">
               <Typography fontWeight="bold" className="min-w-[2.8rem]">
@@ -97,7 +97,7 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
               )}
             </Box>
             {/* 제목 & 가수 & 그룹 & 유튜브 */}
-            <Box className="f-row-8 !items-start !flex-nowrap">
+            <Box className="f-row-8 !items-start !flex-nowrap flex-1">
               <Box className="f-col-4 self-center">
                 {isVisible.group && (
                   <Box className="text-xs font-bold">
@@ -114,7 +114,10 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
                 </Box>
               </Box>
               {isVisible.youtube && (
-                <SongPlayButton youtube={song.youtube} />
+                <SongPlayButton
+                  youtube={song.youtube}
+                  height="3.2rem"
+                />
               )}
             </Box>
             {/* 태그 목록 & 메모 & 가사 */}
