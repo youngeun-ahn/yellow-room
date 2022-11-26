@@ -38,7 +38,6 @@ function SongPlayButton ({ youtube, ...boxProps }: Props) {
     return (
       <Box {...boxProps}>
         <IconButton
-          // className="max-w-[4rem]"
           onClick={() => setPlay(true)}
           disableRipple
         >
