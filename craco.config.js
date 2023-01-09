@@ -1,9 +1,9 @@
-const CracoAlias = require('craco-alias')
+const { CracoAliasPlugin } = require('react-app-alias')
 
 module.exports = {
   plugins: [
     {
-      plugin: CracoAlias,
+      plugin: CracoAliasPlugin,
       options: {
         source: 'tsconfig',
         tsConfigPath: 'tsconfig.paths.json',
