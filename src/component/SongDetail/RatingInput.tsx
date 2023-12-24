@@ -1,5 +1,5 @@
 import { Rating, RatingProps, useEventCallback } from '@mui/material'
-import { clamp } from 'lodash'
+import { clamp } from 'lodash-es'
 import { forwardRef, Ref } from 'react'
 
 function RatingInput (

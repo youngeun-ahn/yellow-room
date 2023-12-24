@@ -1,4 +1,4 @@
-import { sortedUniq } from 'lodash'
+import { sortedUniq } from 'lodash-es'
 import sha1 from 'sha1'
 
 export const isKeywordIncludes = (

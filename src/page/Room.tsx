@@ -9,7 +9,7 @@ import SongDetailProvider, { useSongDetailContext } from '@component/SongDetail/
 import SongDetailDrawer from '@component/SongDetail/SongDetail'
 import useLocalStorage from 'use-local-storage'
 import { uniqSort } from '@core/util'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 function Room () {
   const { id: roomId = '' } = useParams()
@@ -29,6 +29,7 @@ function Room () {
       setLastEnteredRoom(room.id)
       return
     }
+
     navigate('/', { state: { exit: true }, replace: true })
   }, [isRoomFetched, Boolean(room)])
 
@@ -36,6 +37,7 @@ function Room () {
   const [myRoomList, setMyRoomList] = useLocalStorage<string[]>('myRoomList', [])
   useEffect(() => {
     if (!room?.name?.trim()) return
+
     const nextRoomList = uniqSort([...myRoomList, room.name])
     setMyRoomList(nextRoomList)
   }, [room?.name])
@@ -61,11 +63,11 @@ function Room () {
   )
 
   const cntSearched = songGroupEntries.flatMap(_ => _[1]).length
-
   const scrollBodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!scrollBodyRef.current) return undefined
+
     const onScroll = debounce(() => {
       window.dispatchEvent(new Event('rerender-card'))
     }, 50)
@@ -81,6 +83,7 @@ function Room () {
   if (!roomId) {
     return <Navigate to="/" />
   }
+
   return (
     <>
       <RoomHeader

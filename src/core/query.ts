@@ -10,7 +10,7 @@ import {
 } from '@react-query-firebase/firestore'
 import { nanoid } from 'nanoid'
 import { useDeepCompareMemo } from 'use-deep-compare'
-import { groupBy } from 'lodash'
+import { groupBy } from 'lodash-es'
 import { useMemo } from 'react'
 
 import firestore, { getDefaultConverter } from './firestore'
