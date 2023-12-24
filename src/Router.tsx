@@ -26,7 +26,7 @@ function Page () {
 function Router () {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Container>LOADING</Container>}>
+      <Suspense fallback={<Container />}>
         <Routes>
           <Route path="/" element={<Page />}>
             <Route index element={<Lobby />} />

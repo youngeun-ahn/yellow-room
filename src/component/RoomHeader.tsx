@@ -1,8 +1,9 @@
 import { logShareRoom } from '@core/analytics'
-import { ContentCopy } from '@mui/icons-material'
+import { CheckCircle, ContentCopy } from '@mui/icons-material'
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import SettingDrawer from './Setting/SettingDrawer'
 
 interface Props {
@@ -24,6 +25,14 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
     }
   }
 
+  const [copied, setCopied] = useState(false)
+  const onCopy = (text?: string, result?: boolean) => {
+    setCopied(Boolean(result))
+
+    if (!result) return
+    logShareRoom()
+  }
+
   return (
     <AppBar position="fixed" className="!z-[9999]">
       <Toolbar className="f-row-start-4">
@@ -33,29 +42,29 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
           display={roomName ? undefined : 'none'}
         >
           {roomName}
-          {
-            isSettingOpened
-              ? ' > Settings'
-              : (
-                <>
-                  <small className="opacity-30">
-                    {` (${roomId})`}
-                  </small>
-                  <CopyToClipboard
-                    text={location.href}
-                    onCopy={logShareRoom}
-                  >
-                    <IconButton
-                      className="opacity-30 hover:opacity-100 !ml-2"
-                      disableRipple
-                      disableFocusRipple
-                    >
-                      <ContentCopy htmlColor="white" />
-                    </IconButton>
-                  </CopyToClipboard>
-                </>
-              )
-          }
+          {isSettingOpened ? (
+            ' > Settings'
+          ) : (
+            <>
+              <small className="opacity-30">
+                {` (${roomId})`}
+              </small>
+              <CopyToClipboard
+                text={location.href}
+                onCopy={onCopy}
+              >
+                <IconButton
+                  className="opacity-70 hover:opacity-100 !ml-2"
+                  disableRipple
+                  disableFocusRipple
+                >
+                  {copied
+                    ? <CheckCircle htmlColor="white" />
+                    : <ContentCopy htmlColor="white" />}
+                </IconButton>
+              </CopyToClipboard>
+            </>
+          )}
         </Typography>
       </Toolbar>
     </AppBar>

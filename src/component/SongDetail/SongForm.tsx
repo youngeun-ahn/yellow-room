@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Info } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
-  Autocomplete, TextField, Checkbox, IconButton, FormHelperText,
+  Autocomplete, TextField, Checkbox, IconButton,
 } from '@mui/material'
 import { KeyboardEvent, useMemo } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
@@ -194,10 +194,10 @@ function SongForm ({ songForm }: Props) {
                 }}
                 inputRef={field.ref}
                 helperText={(
-                  <FormHelperText className="!f-row-start-2">
+                  <>
                     <Info fontSize="small" />
                     그룹을 설정하여 노래 목록에서 그룹으로 묶을 수 있습니다.
-                  </FormHelperText>
+                  </>
                 )}
               />
             )}
