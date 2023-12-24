@@ -2,7 +2,7 @@ import {
   Autocomplete, Box, IconButton, MenuItem, SvgIcon, TextField, Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { Close, Info, InfoOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
+import { Close, Info, Visibility, VisibilityOff } from '@mui/icons-material'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
@@ -33,13 +33,19 @@ function Lobby () {
       roomPwd: '',
     },
   })
-  const { roomName, roomPwd } = watch()
+
   const { errors, dirtyFields } = formState
   const [isKeyVisible, setKeyVisibility] = useState(false)
 
   /* Login */
   const navigate = useNavigate()
-  const { room } = useFindRoom(roomName.trim(), roomPwd)
+  const {
+    room,
+    isFetching: isLoadingFindRoom,
+  } = useFindRoom(
+    watch('roomName').trim(),
+    watch('roomPwd'),
+  )
 
   const {
     createRoom,
@@ -47,9 +53,18 @@ function Lobby () {
     isLoading: isLoadingNewRoom,
   } = useCreateRoom()
 
-  const onClickEnter = handleSubmit(() => {
+  // NOTE: Form 업데이트 후 요청 직전 렌더링 사이클에 onClickEnter가 호출되는 경우
+  // Room fetch가 되지 않은 상태에서 호출되는 문제가 있어서 Rerender 시킨 뒤 effect에서 처리
+  const [needRerender, setNeedRerender] = useState(false)
+  const onClickEnter = handleSubmit(({ roomName, roomPwd }) => {
+    if (isLoadingFindRoom) {
+      setNeedRerender(true)
+      return
+    }
+
     const isPrivate = Boolean(roomPwd)
     logEnterRoom(isPrivate)
+
     // 없는 방이면 firebase 문서 생성하고 redirect
     if (!room) {
       createRoom(roomName.trim(), roomPwd)
@@ -57,15 +72,28 @@ function Lobby () {
       navigate(`/room/${newRoomId}`, { replace: true })
       return
     }
+
     // 있는 방이면 바로 redirect
     navigate(`/room/${room.id}`, { replace: true })
   })
 
+  useEffect(() => {
+    if (!needRerender) return
+    if (isLoadingFindRoom) return
+
+    setNeedRerender(false)
+    onClickEnter()
+  }, [needRerender, isLoadingFindRoom])
+
   /* Auto Login to last entered room */
   const [lastEnteredRoom, setLastEnteredRoom] = useLocalStorage('lastEnteredRoom', '')
-  const { room: lastRoom, isLoading } = useRoom(lastEnteredRoom)
+  const {
+    room: lastRoom,
+    isLoading: isLoadingLastEnteredRoom,
+  } = useRoom(lastEnteredRoom)
+
   const { state } = useLocation()
-  const locState = state as { exit: boolean }
+  const locState: { exit: boolean } = state
   const isExited = locState?.exit ?? false
 
   useEffect(() => {
@@ -73,11 +101,13 @@ function Lobby () {
     setLastEnteredRoom(undefined)
   }, [isExited])
 
-  if (lastEnteredRoom && isLoading) {
+  if (lastEnteredRoom && isLoadingLastEnteredRoom) {
     return <></>
   }
+
   if (!isExited && lastRoom) {
     logEnterRoom(Boolean(lastRoom.pwd))
+
     return (
       <Navigate to={`/room/${lastEnteredRoom}`} replace />
     )
@@ -129,7 +159,7 @@ function Lobby () {
                         className="!f-row-2"
                         visibility={fieldState.error ? 'visible' : 'hidden'}
                       >
-                        <InfoOutlined className="!text-xs" />
+                        <Info className="!text-xs" />
                         <span className="!text-xs">
                           {fieldState.error?.message}
                         </span>
@@ -206,7 +236,7 @@ function Lobby () {
                     </Box>
                   )}
                   <Box component="span" className="f-row-start-4 !flex-nowrap">
-                    <InfoOutlined className="!text-xs" />
+                    <Info className="!text-xs" />
                     <span className="!text-xs">
                       동일한 이름의 다른 방을 구분하기 위한 용도입니다.
                     </span>
