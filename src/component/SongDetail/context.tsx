@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { produce } from 'immer'
 import {
   createContext, useContext, useReducer,
   Dispatch, Reducer, PropsWithChildren,
