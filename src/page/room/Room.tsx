@@ -131,6 +131,8 @@ function Room () {
                 songList={groupSongList}
               />
             ))}
+            {/* Bottom Gutter */}
+            <Box className="min-h-[4rem]" />
           </Box>
         )}
         {/* No Search Result */}
