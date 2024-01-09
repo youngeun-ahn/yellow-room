@@ -3,8 +3,8 @@ import {
 } from 'react-router-dom'
 import { Box } from '@mui/material'
 
-import Lobby from '@page/Lobby'
-import Room from '@page/Room'
+import Lobby from '@page/lobby/Lobby'
+import Room from '@page/room/Room'
 import { PropsWithChildren, Suspense } from 'react'
 
 function Container ({ children }: PropsWithChildren) {
