@@ -5,10 +5,11 @@ import { useForm } from 'react-hook-form'
 import { useCreateRoom, useFindRoom, useRoom } from '@core/query'
 import useLocalStorage from 'use-local-storage'
 import { useEffect, useState } from 'react'
-import { logCreateRoom, logEnterRoom } from '@core/analytics'
+import { logEnterRoom } from '@core/analytics'
 import { RoomForm } from '.'
 import RoomPasswordField from './component/RoomPasswordField'
 import RoomNameField from './component/RoomNameField'
+import NewRoomDialog from './component/NewRoomDialog'
 
 function Lobby () {
   /* Forms */
@@ -19,11 +20,10 @@ function Lobby () {
       roomPwd: '',
     },
   })
+  const { watch, handleSubmit } = form
 
-  const {
-    watch,
-    handleSubmit,
-  } = form
+  /* New Room Dialog */
+  const [isNewRoomConfirmOpened, setNewRoomConfirmOpened] = useState(false)
 
   /* Login */
   const navigate = useNavigate()
@@ -36,15 +36,13 @@ function Lobby () {
   )
 
   const {
-    createRoom,
-    roomId: newRoomId,
     isLoading: isLoadingNewRoom,
   } = useCreateRoom()
 
   // NOTE: Form 업데이트 후 요청 직전 렌더링 사이클에 onClickEnter가 호출되는 경우
   // Room fetch가 되지 않은 상태에서 호출되는 문제가 있어서 Rerender 시킨 뒤 effect에서 처리
   const [needRerender, setNeedRerender] = useState(false)
-  const onClickEnter = handleSubmit(({ roomName, roomPwd }) => {
+  const onClickEnter = handleSubmit(({ roomPwd }) => {
     if (isLoadingFindRoom) {
       setNeedRerender(true)
       return
@@ -53,11 +51,9 @@ function Lobby () {
     const isPrivate = Boolean(roomPwd)
     logEnterRoom(isPrivate)
 
-    // 없는 방이면 firebase 문서 생성하고 redirect
+    // 없는 방이면 새 방 생성 Dialog 열기
     if (!room) {
-      createRoom(roomName.trim(), roomPwd)
-      logCreateRoom(isPrivate)
-      navigate(`/room/${newRoomId}`, { replace: true })
+      setNewRoomConfirmOpened(true)
       return
     }
 
@@ -126,6 +122,11 @@ function Lobby () {
         >
           노란 방 입장
         </LoadingButton>
+        <NewRoomDialog
+          form={form}
+          open={isNewRoomConfirmOpened}
+          onClose={() => setNewRoomConfirmOpened(false)}
+        />
       </Box>
     </>
   )

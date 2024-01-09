@@ -1,7 +1,18 @@
 import { Info, Visibility, VisibilityOff } from '@mui/icons-material'
 import { Box, IconButton, SvgIcon, TextField } from '@mui/material'
-import { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import { RoomFormProps } from '..'
+
+function HelperTextItem ({ children }: PropsWithChildren) {
+  return (
+    <Box className="f-row-start-4 !flex-nowrap !items-start">
+      <Info className="!text-xs mt-2" />
+      <span className="text-xs">
+        {children}
+      </span>
+    </Box>
+  )
+}
 
 interface Props extends RoomFormProps {
   onEnter: () => void
@@ -53,28 +64,16 @@ function RoomPasswordField ({ form, onEnter }: Props) {
           visibility={dirtyFields.roomPwd ? 'visible' : 'hidden'}
         >
           {errors.roomPwd && (
-            <Box
-              component="span"
-              className="f-row-start-4 !flex-nowrap"
-            >
-              <Info className="!text-xs" />
-              <span className="!text-xs">
-                {errors.roomPwd?.message}
-              </span>
-            </Box>
+            <HelperTextItem>
+              {errors.roomPwd?.message}
+            </HelperTextItem>
           )}
-          <Box component="span" className="f-row-start-4 !flex-nowrap">
-            <Info className="!text-xs" />
-            <span className="!text-xs">
-              동일한 이름의 다른 방을 구분하기 위한 용도입니다.
-            </span>
-          </Box>
-          <Box component="span" className="f-row-start-4 !items-start !flex-nowrap">
-            <Info className="!text-xs mt-2" />
-            <span className="!text-xs">
-              한번 등록하면 변경할 수 없지만 생성된 방 링크만으로도 입장할 수 있습니다.
-            </span>
-          </Box>
+          <HelperTextItem>
+            동일한 이름의 다른 방을 구분하기 위한 용도입니다.
+          </HelperTextItem>
+          <HelperTextItem>
+            한번 등록하면 변경할 수 없지만 생성된 방 링크만으로도 입장할 수 있습니다.
+          </HelperTextItem>
         </Box>
       )}
     />
