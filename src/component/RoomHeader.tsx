@@ -39,7 +39,8 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
         <SettingDrawer open={isSettingOpened} toggle={toggle} />
         <Typography
           variant="h6"
-          display={roomName ? undefined : 'none'}
+          display={roomName ? 'flex' : 'none'}
+          className="gap-4 items-center"
         >
           {roomName}
           {isSettingOpened ? (
@@ -54,7 +55,7 @@ function RoomHeader ({ roomId = '', roomName = '' }: Props) {
                 onCopy={onCopy}
               >
                 <IconButton
-                  className="opacity-70 hover:opacity-100 !ml-2"
+                  className="opacity-70 hover:opacity-100"
                   disableRipple
                   disableFocusRipple
                 >
