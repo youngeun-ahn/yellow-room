@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
@@ -10,6 +10,7 @@ import { RoomForm } from '.'
 import RoomPasswordField from './component/RoomPasswordField'
 import RoomNameField from './component/RoomNameField'
 import NewRoomDialog from './component/NewRoomDialog'
+import LobbyTitle from './component/LobbyTitle'
 
 function Lobby () {
   /* Forms */
@@ -98,37 +99,28 @@ function Lobby () {
   }
 
   return (
-    <>
-      <Box className="f-col-12 w-full max-w-md px-16 py-24">
-        <Box>
-          <Typography fontFamily="Roboto" fontSize="2.8rem" lineHeight={1.5}>
-            Yellow
-          </Typography>
-          <Typography fontFamily="Roboto" fontSize="4.8rem" lineHeight={1}>
-            Room
-          </Typography>
-        </Box>
-        <Box className="f-col-4">
-          <RoomNameField form={form} />
-          <RoomPasswordField form={form} onEnter={onClickEnter} />
-        </Box>
-        <LoadingButton
-          fullWidth
-          loading={isLoadingNewRoom}
-          variant="contained"
-          size="large"
-          className="mt-8 !rounded-none"
-          onClick={onClickEnter}
-        >
-          노란 방 입장
-        </LoadingButton>
-        <NewRoomDialog
-          form={form}
-          open={isNewRoomConfirmOpened}
-          onClose={() => setNewRoomConfirmOpened(false)}
-        />
+    <Box className="f-col-12 w-full max-w-md px-16 py-24">
+      <LobbyTitle />
+      <Box className="f-col-4">
+        <RoomNameField form={form} />
+        <RoomPasswordField form={form} onEnter={onClickEnter} />
       </Box>
-    </>
+      <LoadingButton
+        fullWidth
+        loading={isLoadingNewRoom}
+        variant="contained"
+        size="large"
+        className="mt-8 !rounded-none"
+        onClick={onClickEnter}
+      >
+        노란 방 입장
+      </LoadingButton>
+      <NewRoomDialog
+        form={form}
+        open={isNewRoomConfirmOpened}
+        onClose={() => setNewRoomConfirmOpened(false)}
+      />
+    </Box>
   )
 }
 
