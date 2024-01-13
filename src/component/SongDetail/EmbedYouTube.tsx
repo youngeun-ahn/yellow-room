@@ -56,7 +56,7 @@ function EmbedYouTube ({ youtube, onChange, readOnly }: Props) {
                   <DialogContent>
                     <TextField
                       placeholder="e.g) https://www.youtube.com/watch?v=..."
-                      variant="standard" fullWidth
+                      fullWidth
                       className="!w-[18rem] max-w-full"
                       {...register('youtube', {
                         validate (link) {

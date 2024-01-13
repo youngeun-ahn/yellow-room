@@ -3,6 +3,9 @@ import { createTheme } from '@mui/material'
 const THEME = createTheme({
   components: {
     MuiTextField: {
+      defaultProps: {
+        variant: 'standard',
+      },
       styleOverrides: {
         root: {
           'color': 'black !important',

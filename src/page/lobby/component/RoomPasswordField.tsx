@@ -5,12 +5,12 @@ import { RoomFormProps } from '..'
 
 function HelperTextItem ({ children }: PropsWithChildren) {
   return (
-    <Box className="f-row-start-4 !flex-nowrap !items-start">
+    <span className="f-row-start-4 !flex-nowrap !items-start">
       <Info className="!text-xs mt-2" />
       <span className="text-xs">
         {children}
       </span>
-    </Box>
+    </span>
   )
 }
 
@@ -30,7 +30,6 @@ function RoomPasswordField ({ form, onEnter }: Props) {
     <TextField
       fullWidth
       label="방 열쇠 (선택사항)"
-      variant="standard"
       type={isKeyVisible ? 'text' : 'password'}
       InputProps={{
         endAdornment: (
@@ -38,7 +37,10 @@ function RoomPasswordField ({ form, onEnter }: Props) {
             size="small"
             onClick={() => setKeyVisibility(!isKeyVisible)}
           >
-            <SvgIcon component={isKeyVisible ? Visibility : VisibilityOff} fontSize="small" />
+            <SvgIcon
+              component={isKeyVisible ? Visibility : VisibilityOff}
+              fontSize="small"
+            />
           </IconButton>
         ),
         inputProps: {

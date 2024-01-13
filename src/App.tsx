@@ -9,7 +9,7 @@ function App () {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <Paper className="w-screen h-screen">
+        <Paper className="w-screen h-screen scrollbar-base">
           <Router />
         </Paper>
       </ThemeProvider>

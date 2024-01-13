@@ -1,5 +1,6 @@
 const plugin = require('tailwindcss/plugin')
 const twTextShadow = require('tailwindcss-textshadow')
+const twScrollbar = require('tailwind-scrollbar')
 
 const flexUtil = plugin(({ addUtilities, matchUtilities, theme }) => {
   const flex = {
@@ -73,5 +74,9 @@ module.exports = {
       24: '2.4rem',
     },
   },
-  plugins: [flexUtil, twTextShadow],
+  plugins: [
+    twScrollbar({ nocompatible: true }),
+    flexUtil,
+    twTextShadow,
+  ],
 }

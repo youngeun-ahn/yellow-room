@@ -58,7 +58,6 @@ function SongForm ({ songForm }: Props) {
       <Box className="f-row-start-12 !items-start">
         <TextField
           label="번호"
-          variant="standard"
           type="number" inputMode="numeric" pattern="[\-|0-9]*"
           required
           className="w-[6.4rem]"
@@ -95,7 +94,6 @@ function SongForm ({ songForm }: Props) {
           </IconButton>
           <TextField
             label="키"
-            variant="standard"
             type="number" inputMode="numeric" pattern="[\-|0-9]*"
             className="w-[4rem]"
             {...register('key')}
@@ -125,7 +123,7 @@ function SongForm ({ songForm }: Props) {
       {/* 노래 제목 */}
       <TextField
         label="노래 제목"
-        variant="standard" fullWidth required
+        fullWidth required
         inputProps={{ maxLength: 64 }}
         {...register('title', {
           required: '노래 제목은 반드시 입력해야 합니다.',
@@ -152,7 +150,6 @@ function SongForm ({ songForm }: Props) {
                 name="singer"
                 {...params}
                 label="가수"
-                variant="standard"
                 InputProps={{
                   ...InputProps,
                   inputProps: {
@@ -184,7 +181,6 @@ function SongForm ({ songForm }: Props) {
               <TextField
                 {...params}
                 label="그룹"
-                variant="standard"
                 InputProps={{
                   ...InputProps,
                   inputProps: {
@@ -223,7 +219,6 @@ function SongForm ({ songForm }: Props) {
             renderInput={params => (
               <TextField
                 {...params}
-                variant="standard"
                 label="태그 (# 또는 공백으로 구분)"
                 inputRef={field.ref}
               />

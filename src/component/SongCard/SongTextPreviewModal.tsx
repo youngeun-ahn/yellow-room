@@ -28,7 +28,7 @@ function SongTextPreviewModal ({ label, title, content }: Props) {
           <DialogTitle className="!font-bold">
             {title}
           </DialogTitle>
-          <DialogContent className="whitespace-pre-wrap text-xs">
+          <DialogContent className="whitespace-pre-wrap text-xs mr-8">
             {content}
           </DialogContent>
           <DialogActions>

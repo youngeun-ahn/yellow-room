@@ -10,7 +10,7 @@ function ExitRoomButton () {
       className="!bg-green-500 !shadow-sm"
       onClick={() => {
         logExitRoom()
-        navigate('/', { state: { exit: true } })
+        navigate('/', { state: { exit: true }, replace: true })
       }}
     >
       로비로 나가기

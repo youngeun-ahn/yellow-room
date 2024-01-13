@@ -84,6 +84,7 @@ function Lobby () {
   useEffect(() => {
     if (!isExited) return
     setLastEnteredRoom(undefined)
+    navigate('', { state: undefined, replace: true })
   }, [isExited])
 
   if (lastEnteredRoom && isLoadingLastEnteredRoom) {
@@ -113,7 +114,7 @@ function Lobby () {
         className="mt-8 !rounded-none"
         onClick={onClickEnter}
       >
-        노란 방 입장
+        노란 방 입장하기
       </LoadingButton>
       <NewRoomDialog
         form={form}

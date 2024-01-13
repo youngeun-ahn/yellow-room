@@ -31,7 +31,6 @@ function RoomNameField ({ form }: RoomFormProps) {
               error={Boolean(fieldState.error)}
               required
               label="방 이름"
-              variant="standard"
               {...params}
               inputProps={{
                 ...params.inputProps,

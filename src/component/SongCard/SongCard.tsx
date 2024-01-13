@@ -4,7 +4,6 @@ import { Box, Card, CardContent, CardProps, IconButton, Rating, Typography } fro
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { useDeepCompareMemo } from 'use-deep-compare'
-import { useDebounce } from 'usehooks-ts'
 import { useSongDetailContext } from '../SongDetail/context'
 import GenderToggleButton from '../SongDetail/GenderToggleButton'
 import SongPlayButton from './SongPlayButton'
@@ -16,9 +15,7 @@ interface Props extends CardProps {
 }
 function SongCard ({ song, mock, className, ...cardProps }: Props) {
   const { openSongDetail } = useSongDetailContext()
-  const {
-    isCardViewVisible,
-  } = useSettingSlice()
+  const { isCardViewVisible } = useSettingSlice()
 
   const isVisible = useDeepCompareMemo(() => ({
     key: isCardViewVisible('KEY') && song.key !== 0,
@@ -31,10 +28,10 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
     youtube: isCardViewVisible('YOUTUBE') && song.youtube,
   }), [isCardViewVisible, song])
 
-  /* 일정 스크롤 영역 바깥의 카드는 컨텐츠 렌더링 X */
+  /* 일정 스크롤 영역 바깥의 카드는 세부 컨텐츠 렌더링 X */
   const cardRef = useRef<HTMLDivElement>(null)
   const [scrollY, setScrollY] = useState<number>(Infinity)
-  const isInRenderArea = useDebounce(scrollY > -640 && scrollY < 2560, 100)
+  const isInRenderArea = scrollY > -640 && scrollY < 2560
 
   useEffect(() => {
     if (!cardRef.current) return undefined
@@ -47,6 +44,24 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
     window.addEventListener('rerender-card', updateScrollY)
     return () => window.removeEventListener('rerender-card', updateScrollY)
   }, [cardRef.current])
+
+  // 가상 스크롤 placeholder의 height 계산(CLS 최적화)
+  const defaultCardHeight = useDeepCompareMemo(() => {
+    const { youtube, group, tag, lyric, memo } = isVisible
+
+    let height = 5.2
+    if (youtube) {
+      height += 1.8
+    } else if (group) {
+      height += 1.4
+    }
+
+    if (tag || lyric || memo) {
+      height += 1.4
+    }
+
+    return `${height}rem`
+  }, [isVisible])
 
   return (
     <Card
@@ -72,9 +87,9 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
           <Box className="f-col-4 h-full">
             {/* 번호 & 키 & 선호도 */}
             <Box className="f-row-start-4">
-              <Typography fontWeight="bold" className="min-w-[2.8rem]">
+              <Box className="min-w-[2.8rem] font-bold">
                 {song.number}
-              </Typography>
+              </Box>
               {isVisible.key && (
                 <Box className="f-row">
                   <GenderToggleButton
@@ -98,14 +113,19 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
             </Box>
             {/* 제목 & 가수 & 그룹 & 유튜브 */}
             <Box className="f-row-8 !items-start !flex-nowrap flex-1">
-              <Box className="f-col-4 self-center">
+              <Box
+                className={classNames(
+                  'f-col-4 font-bold',
+                  { 'self-center': isVisible.youtube },
+                )}
+              >
                 {isVisible.group && (
-                  <Box className="text-xs font-bold">
+                  <Box className="text-xs">
                     {song.group}
                   </Box>
                 )}
                 <Box>
-                  <span className="mr-4 font-bold">
+                  <span className="mr-4">
                     {song.title}
                   </span>
                   {isVisible.singer && (
@@ -121,11 +141,10 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
               )}
             </Box>
             {/* 태그 목록 & 메모 & 가사 */}
-            <Box className="f-row-4 !flex-nowrap !items-end">
+            <Box className="f-row-4 !flex-nowrap !items-end min-h-[1.2rem]">
               {isVisible.tag && (
                 <Box
-                  className="flex-1 text-blue-500 text-xs"
-                  sx={{ wordBreak: 'break-all' }}
+                  className="flex-1 text-blue-500 text-xs break-all"
                 >
                   {song.tagList.map(tag => (
                     <span key={tag} className="mr-4">
@@ -154,7 +173,10 @@ function SongCard ({ song, mock, className, ...cardProps }: Props) {
           </Box>
         </CardContent>
       ) : (
-        <CardContent className="h-[5.4rem] f-col-8 justify-around font-bold">
+        <CardContent
+          sx={{ height: defaultCardHeight }}
+          className="f-col-8 justify-start font-bold"
+        >
           <span>{song.number}</span>
           <span>{song.title}</span>
         </CardContent>

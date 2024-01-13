@@ -10,6 +10,7 @@ import SongDetailDrawer from '@component/SongDetail/SongDetail'
 import useLocalStorage from 'use-local-storage'
 import { uniqSort } from '@core/util'
 import { debounce } from 'lodash-es'
+import classNames from 'classnames'
 
 function Room () {
   const { id: roomId = '' } = useParams()
@@ -81,7 +82,7 @@ function Room () {
   }, [keyword])
 
   if (!roomId) {
-    return <Navigate to="/" />
+    return <Navigate to="/" replace />
   }
 
   return (
@@ -100,7 +101,6 @@ function Room () {
       <Box className="f-col-8 w-full h-full pt-[4.2rem] sm:pt-[5.4rem]">
         {/* Search */}
         <TextField
-          variant="standard"
           label="제목, 가수, 작품명, 태그로 검색"
           inputMode="search"
           fullWidth
@@ -122,7 +122,10 @@ function Room () {
         {isSuccess && hasSong && (
           <Box
             ref={scrollBodyRef}
-            className="f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8"
+            className={classNames(
+              'f-col-12 flex-1 overflow-auto mb-16 pb-2 -mr-8 pr-8',
+              'scrollbar-thumb-yellow-400 hover:scrollbar-thumb-yellow-500',
+            )}
           >
             {songGroupEntries.map(([groupName, groupSongList]) => (
               <SongGroup

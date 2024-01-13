@@ -60,6 +60,7 @@ function DeleteRoomButton () {
               <TextField
                 type="password"
                 className="!mt-8"
+                variant="outlined"
                 fullWidth
                 label="Room Private Key"
                 placeholder="방 열쇠 입력(* 없으면 입력하지 마세요)"

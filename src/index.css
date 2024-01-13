@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  div {
+    @apply scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 scrollbar-track-transparent scrollbar-thin
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI', 'Roboto', 'Oxygen',
@@ -16,6 +22,5 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
