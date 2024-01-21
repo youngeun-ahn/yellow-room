@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Info } from '@mui/icons-material'
 import {
   Box,
   FormControl, FormControlLabel, FormLabel,
-  Autocomplete, TextField, Checkbox, IconButton,
+  Autocomplete, TextField, Checkbox, IconButton, TextFieldProps,
 } from '@mui/material'
 import { KeyboardEvent, useMemo } from 'react'
 import { Controller, UseFormReturn } from 'react-hook-form'
@@ -50,6 +50,15 @@ function SongForm ({ songForm }: Props) {
   const setSongKey = (nextSongKey: number) => {
     trigger('key')
     setValue('key', nextSongKey)
+  }
+
+  const textAreaProps: Partial<TextFieldProps<'outlined'>> = {
+    variant: 'outlined',
+    fullWidth: true,
+    multiline: true,
+    rows: 4,
+    inputProps: { maxLength: 10240, className: '!resize-y' },
+    disabled: isReadonly,
   }
 
   return (
@@ -270,22 +279,14 @@ function SongForm ({ songForm }: Props) {
       {/* 메모 */}
       <TextField
         label="메모"
-        variant="outlined" fullWidth
-        multiline rows={4}
-        InputProps={{
-          inputProps: { maxLength: 10240 },
-        }}
+        {...textAreaProps}
         {...register('memo')}
-        disabled={isReadonly}
       />
       {/* 가사 */}
       <TextField
         label="가사"
-        variant="outlined" fullWidth
-        multiline rows={4}
-        inputProps={{ maxLength: 10240 }}
+        {...textAreaProps}
         {...register('lyric')}
-        disabled={isReadonly}
       />
       {/* 동영상 */}
       <Controller
