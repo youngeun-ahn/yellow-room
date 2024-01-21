@@ -52,12 +52,15 @@ function SongForm ({ songForm }: Props) {
     setValue('key', nextSongKey)
   }
 
-  const textAreaProps: Partial<TextFieldProps<'outlined'>> = {
+  const textAreaProps: TextFieldProps<'outlined'> = {
     variant: 'outlined',
     fullWidth: true,
     multiline: true,
     rows: 4,
-    inputProps: { maxLength: 10240, className: '!resize-y' },
+    inputProps: {
+      maxLength: 10240,
+      className: '!resize-y',
+    },
     disabled: isReadonly,
   }
 

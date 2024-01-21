@@ -1,8 +1,8 @@
-import { initializeApp } from 'firebase/app'
+import { FirebaseOptions, initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { getFirestore, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore'
 
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
   authDomain: 'frebern-yellow-room.firebaseapp.com',
   projectId: 'frebern-yellow-room',
