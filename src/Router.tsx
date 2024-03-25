@@ -6,6 +6,7 @@ import { Box } from '@mui/material'
 import Lobby from '@page/lobby/Lobby'
 import Room from '@page/room/Room'
 import { PropsWithChildren, Suspense } from 'react'
+import HelpPage from '@page/help/HelpPage'
 
 function Container ({ children }: PropsWithChildren) {
   return (
@@ -31,6 +32,7 @@ function Router () {
           <Route path="/" element={<Page />}>
             <Route index element={<Lobby />} />
             <Route path="room/:id" element={<Room />} />
+            <Route path="help" element={<HelpPage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
         </Routes>
